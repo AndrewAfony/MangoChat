@@ -47,6 +47,7 @@ data class ChatMessage(
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
+    navigateBack: () -> Unit
 ) {
 
     ChatScreenContent(
@@ -69,7 +70,8 @@ fun ChatScreen(
                 user = "User",
                 timestamp = ""
             )
-        )
+        ),
+        navigateBack = navigateBack
     )
 }
 
@@ -78,7 +80,8 @@ fun ChatScreenContent(
     modifier: Modifier = Modifier,
     messages: List<ChatMessage>,
     user: String,
-    image: String
+    image: String,
+    navigateBack: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -87,7 +90,8 @@ fun ChatScreenContent(
         ChatScreenTopBar(
             image = image,
             name = user,
-            status = "Online"
+            status = "Online",
+            navigateBack = navigateBack
         )
         LazyColumn(
             modifier = Modifier
@@ -131,6 +135,7 @@ fun ChatScreenTopBar(
     image: String,
     name: String,
     status: String,
+    navigateBack: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -149,7 +154,7 @@ fun ChatScreenTopBar(
             contentDescription = null,
             modifier = Modifier
                 .clip(CircleShape)
-                .clickable { }
+                .clickable { navigateBack() }
                 .padding(12.dp)
         )
         AsyncImage(
@@ -283,7 +288,8 @@ private fun ChatScreenPrev() {
                         user = "Andrew Afanasiev",
                         timestamp = ""
                     )
-                )
+                ),
+                navigateBack = {}
             )
         }
     }

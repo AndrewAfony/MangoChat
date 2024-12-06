@@ -17,7 +17,10 @@ class ChatFeatureImpl: ChatFeatureApi {
         modifier: Modifier,
     ) {
         navGraphBuilder.composable(chatRoute) {
-            ChatScreen(modifier = modifier)
+            ChatScreen(
+                modifier = modifier,
+                navigateBack = { navController.popBackStack() }
+            )
         }
     }
 }
