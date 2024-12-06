@@ -1,6 +1,6 @@
 package andrewafony.testapp.home.stories
 
-import andrewafony.testapp.home.TEST_IMAGE
+import andrewafony.testapp.designsystem.TEST_IMAGE
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
