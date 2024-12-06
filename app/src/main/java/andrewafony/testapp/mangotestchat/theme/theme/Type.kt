@@ -45,6 +45,13 @@ val Typography = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp
     ),
+    bodySmall = TextStyle(
+        fontFamily = robotoFontFamily,
+        fontWeight = FontWeight.W400,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.4.sp
+    ),
     labelLarge = TextStyle(
         fontFamily = robotoFontFamily,
         fontWeight = FontWeight.W400,
@@ -54,14 +61,14 @@ val Typography = Typography(
     ),
     labelMedium = TextStyle(
         fontFamily = robotoFontFamily,
-        fontWeight = FontWeight.W400,
+        fontWeight = FontWeight.W300,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     ),
     labelSmall = TextStyle(
         fontFamily = robotoFontFamily,
-        fontWeight = FontWeight.W400,
+        fontWeight = FontWeight.W300,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
