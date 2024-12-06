@@ -1,5 +1,6 @@
 package andrewafony.testapp.mangotestchat
 
+import andrewafony.testapp.auth_api.AuthFeatureApi
 import andrewafony.testapp.chat_api.ChatFeatureApi
 import andrewafony.testapp.feature_api.register
 import andrewafony.testapp.home_api.HomeFeatureApi
@@ -23,8 +24,14 @@ fun AppNavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = root.route
+        startDestination = featureProvider.provide(AuthFeatureApi::class.java).route
     ) {
+
+        register(
+            featureApi = featureProvider.provide(AuthFeatureApi::class.java),
+            navController = navController,
+            modifier = modifier
+        )
 
         register(
             featureApi = root,

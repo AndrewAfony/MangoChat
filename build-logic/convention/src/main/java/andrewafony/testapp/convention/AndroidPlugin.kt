@@ -17,7 +17,7 @@ class AndroidPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.apply {
-                    targetSdk = 34
+                    targetSdk = 35
                 }
                 buildFeatures {
                     compose = true

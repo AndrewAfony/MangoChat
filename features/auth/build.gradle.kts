@@ -9,5 +9,13 @@ android {
 
 dependencies {
 
+    implementation(projects.core.designsystem)
 
+    api(projects.features.authApi)
+
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.ui.tooling)
+
+    implementation("io.github.joelkanyi:komposecountrycodepicker:1.2.8")
 }

@@ -9,5 +9,6 @@ android {
 }
 
 dependencies {
+    api(projects.core.featureApi)
 
 }
