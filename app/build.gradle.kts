@@ -1,19 +1,13 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.mango.android.plugin)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.serialization)
-    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "andrewafony.testapp.mangotestchat"
-    compileSdk = 34
 
     defaultConfig {
         applicationId = "andrewafony.testapp.mangotestchat"
-        minSdk = 23
-        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -29,19 +23,16 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
+
+    implementation(projects.features.auth)
+    implementation(projects.features.home)
+    implementation(projects.features.profile)
+    implementation(projects.features.chat)
+
+    implementation(projects.core.designsystem)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -50,24 +41,19 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+//    implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+
     testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // ==== Room ====
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
     // ==== Koin ====
     implementation (libs.koin.androidx.compose)
-
-    // ==== Coil ====
-    implementation(libs.coil.compose)
 }

@@ -1,26 +1,49 @@
 package andrewafony.testapp.mangotestchat
 
+import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import andrewafony.testapp.home.HomeScreen
+import andrewafony.testapp.profile.ProfileScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import andrewafony.testapp.mangotestchat.theme.theme.MangoTestChatTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             MangoTestChatTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+//                    bottomBar = { BottomNavigation() },
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
 
-                    ChatApp()
+                    ProfileScreen()
                 }
             }
         }
@@ -29,5 +52,71 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ChatApp() {
-
+    HomeScreen()
 }
+
+@Composable
+fun BottomNavigation(
+    modifier: Modifier = Modifier,
+) {
+
+    // TODO check click through
+
+    NavigationBar(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Home,
+                contentDescription = "",
+                modifier = Modifier.size(32.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .clip(CircleShape)
+                    .clickable { }
+                    .fillMaxWidth(0.5f)
+                    .background(Color.Black),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    "",
+                    tint = Color.White
+                )
+                Spacer(modifier = Modifier.padding(4.dp))
+                Text(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    text = "New chat",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White
+                )
+            }
+
+            Icon(
+                imageVector = Icons.Outlined.Person,
+                contentDescription = "",
+                modifier = Modifier.size(32.dp)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun MainActivityPrev() {
+    MangoTestChatTheme {
+        BottomNavigation()
+    }
+}
+

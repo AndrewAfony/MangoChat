@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -20,5 +21,16 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "MangoTestChat"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include(":app")
- 
+include(":data")
+include(":domain")
+
+include(":features:home")
+include(":features:profile")
+include(":features:chat")
+include(":features:auth")
+
+include(":core:designsystem")
