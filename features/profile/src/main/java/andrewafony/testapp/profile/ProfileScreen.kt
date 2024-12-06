@@ -1,7 +1,8 @@
 package andrewafony.testapp.profile
 
-import andrewafony.testapp.designsystem.TEST_IMAGE
+import andrewafony.testapp.designsystem.toast
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -28,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,21 +47,45 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
+data class User(
+    val name: String,
+    val username: String,
+    val image: String,
+    val phone: String,
+    val birthday: String,
+    val city: String,
+    val zodiac: String,
+)
+
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
+    navigateToNameEdit: () -> Unit,
+    navigateToCityEdit: () -> Unit,
+    navigateBack: () -> Unit,
 ) {
 
     ProfileScreenContent(
         modifier = modifier,
-        name = "Andrew Afanasiev",
-        image = TEST_IMAGE,
-        username = "@andrew_afony",
-        phone = "+7 (952) 773-56-92"
+        user = User(
+            name = "Andrew Afanasiev",
+            username = "@andrew_afony",
+            image = "",
+            phone = "+7 (952) 773-56-92",
+            birthday = "24.05.2001",
+            city = "Нижний Новгород",
+            zodiac = "Близнецы"
+        ),
+        navigateToNameEdit = navigateToNameEdit,
+        navigateToCityEdit = navigateToCityEdit,
+        navigateBack = navigateBack
     )
 }
 
@@ -69,17 +93,19 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
-    image: String,
-    name: String,
-    username: String,
-    phone: String,
+    user: User,
+    navigateToNameEdit: () -> Unit,
+    navigateToCityEdit: () -> Unit,
+    navigateBack: () -> Unit,
 ) {
+
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
 
     var isBirthdayBottomSheet by remember { mutableStateOf(false) }
     val birthdayBottomSheetState = rememberModalBottomSheetState()
 
     val scrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
 
     val iconEdit = rememberVectorPainter(andrewafony.testapp.designsystem.icons.IconPhoto)
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -94,7 +120,7 @@ fun ProfileScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        ProfileScreenTopBar()
+        ProfileScreenTopBar(navigateBack = navigateBack)
 
         AsyncImage(
             model = andrewafony.testapp.designsystem.R.drawable.test_image,
@@ -162,9 +188,21 @@ fun ProfileScreenContent(
                 }
         )
 
-        ProfileUnchangeableItemsGroup()
+        ProfileUnchangeableItemsGroup(
+            username = user.username,
+            phone = user.phone,
+            onClick = {
+                clipboardManager.setText(AnnotatedString(it))
+                context.toast("Copied")
+            }
+        )
 
         ProfileScreenItems(
+            name = user.name,
+            birthday = user.birthday,
+            city = user.city,
+            onNameChange = navigateToNameEdit,
+            onCityChange = navigateToCityEdit,
             onBirthdayChange = { isBirthdayBottomSheet = true }
         )
 
@@ -187,11 +225,11 @@ fun ProfileScreenContent(
 @Composable
 fun ProfileScreenTopBar(
     modifier: Modifier = Modifier,
+    navigateBack: () -> Unit,
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -200,7 +238,7 @@ fun ProfileScreenTopBar(
             contentDescription = null,
             modifier = Modifier
                 .clip(CircleShape)
-                .clickable { }
+                .clickable { navigateBack() }
                 .padding(12.dp)
         )
     }
@@ -209,7 +247,12 @@ fun ProfileScreenTopBar(
 @Composable
 fun ProfileScreenItems(
     modifier: Modifier = Modifier,
-    onBirthdayChange: () -> Unit
+    name: String,
+    city: String,
+    birthday: String,
+    onNameChange: () -> Unit,
+    onCityChange: () -> Unit,
+    onBirthdayChange: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -221,19 +264,21 @@ fun ProfileScreenItems(
     ) {
         ProfileItem(
             title = "Имя, фамилия",
-            content = "Andrew Afanasiev",
-            isChangeable = true
+            content = name,
+            isChangeable = true,
+            onClick = onNameChange
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Город",
-            content = "Нижний Новгород",
-            isChangeable = true
+            content = city,
+            isChangeable = true,
+            onClick = onCityChange
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Дата рождения",
-            content = "24.05.2001",
+            content = birthday,
             isChangeable = true,
             onClick = onBirthdayChange
         )
@@ -249,6 +294,9 @@ fun ProfileScreenItems(
 @Composable
 fun ProfileUnchangeableItemsGroup(
     modifier: Modifier = Modifier,
+    username: String,
+    phone: String,
+    onClick: (String) -> Unit
 ) {
 
     Column(
@@ -261,14 +309,16 @@ fun ProfileUnchangeableItemsGroup(
     ) {
         ProfileItem(
             title = "Никнейм",
-            content = "@andrew_afony",
-            isChangeable = false
+            content = username,
+            isChangeable = false,
+            onClick = { onClick(username) }
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Номер телефона",
-            content = "+7 (952) 773-56-92",
-            isChangeable = false
+            content = phone,
+            isChangeable = false,
+            onClick = { onClick(phone) }
         )
     }
 }
@@ -277,6 +327,10 @@ fun ProfileUnchangeableItemsGroup(
 @Composable
 private fun ProfileScreenPrev() {
     andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
-        ProfileScreen()
+        ProfileScreen(
+            navigateToCityEdit = {},
+            navigateToNameEdit = {},
+            navigateBack = {},
+        )
     }
 }

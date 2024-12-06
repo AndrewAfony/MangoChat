@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -22,68 +23,83 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun EditNameScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateBack: () -> Unit
 ) {
 
-    EditNameScreenContent(modifier = modifier)
+    EditNameScreenContent(
+        modifier = modifier,
+        navigateBack = navigateBack
+    )
 }
 
 @Composable
 fun EditNameScreenContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateBack: () -> Unit
 ) {
+
     Column(
         modifier = modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        ProfileScreenTopBar(navigateBack = navigateBack)
+
         Text(
-            text = "Полное имя"
+            modifier = Modifier.padding(top = 24.dp),
+            text = "Полное имя",
+            style = MaterialTheme.typography.titleMedium
         )
 
-        EditNameTextField(
-            name = "Afanasiev",
-            placeholder = "Фамилия"
-        ) { }
+        EditTextField(
+            modifier = Modifier
+                .padding(top = 12.dp),
+            field = "Afanasiev",
+            placeholder = "Фамилия",
+            onEdit = {}
+        )
 
-        EditNameTextField(
-            name = "Andrew",
-            placeholder = "Имя"
-        ) { }
+        EditTextField(
+            modifier = Modifier
+                .padding(vertical = 12.dp)
+                .height(56.dp),
+            field = "Andrew",
+            placeholder = "Имя",
+            onEdit = {}
+        )
 
         Button(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .height(60.dp)
-                .padding(top = 8.dp),
+                .height(56.dp),
             shape = RoundedCornerShape(16.dp),
-            onClick = {  }
+            onClick = {
+                // todo save
+                navigateBack()
+            }
         ) {
-            Text(
-                text = "Сохранить"
-            )
+            Text(text = "Сохранить")
         }
     }
 }
 
 @Composable
-fun EditNameTextField(
+fun EditTextField(
     modifier: Modifier = Modifier,
-    name: String,
+    field: String,
     placeholder: String,
     onEdit: (String) -> Unit,
 ) {
 
     OutlinedTextField(
         modifier = modifier
-            .fillMaxWidth(0.9f)
-            .padding(vertical = 8.dp),
-        value = name,
+            .fillMaxWidth(0.9f),
+        value = field,
         onValueChange = onEdit,
         placeholder = {
-            Text(
-                text = placeholder,
-            )
+            Text(text = placeholder)
         },
         shape = RoundedCornerShape(16.dp),
         colors = OutlinedTextFieldDefaults.colors(
@@ -106,7 +122,9 @@ fun EditNameTextField(
 private fun EditNameScreenPrev() {
     andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
         Surface {
-            EditNameScreenContent()
+            EditNameScreenContent(
+                navigateBack = {}
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package andrewafony.testapp.profile
 
+import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,7 +52,7 @@ fun ProfileItemContent(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { if (isChangeable) onClick() },
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
@@ -83,7 +84,7 @@ fun ProfileItemContent(
 @Preview
 @Composable
 private fun ProfileItemPrev() {
-    andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
+    MangoTestChatTheme {
         Surface(
             color = MaterialTheme.colorScheme.surface
         ) {
