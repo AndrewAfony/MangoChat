@@ -39,14 +39,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+
+    private val featureProvider: FeatureDestinationProvider by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val homeFeature: HomeFeatureApi = get()
-        val settingsFeature: SettingsFeatureApi = get()
-        val profileFeature: ProfileFeatureApi = get()
+        val homeFeature = featureProvider.provide(HomeFeatureApi::class.java)
+        val settingsFeature = featureProvider.provide(SettingsFeatureApi::class.java)
 
         setContent {
 
@@ -74,9 +77,7 @@ class MainActivity : ComponentActivity() {
                     AppNavigationGraph(
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
-                        homeFeatureImpl = homeFeature,
-                        settingsFeatureImpl = settingsFeature,
-                        profileFeatureImpl = profileFeature
+                        featureProvider = featureProvider
                     )
                 }
             }

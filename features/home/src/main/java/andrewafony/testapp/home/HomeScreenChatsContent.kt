@@ -27,6 +27,7 @@ import coil3.compose.AsyncImage
 @Composable
 fun HomeScreenChats(
     modifier: Modifier = Modifier,
+    navigateToChat: (String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -37,7 +38,7 @@ fun HomeScreenChats(
                 image = andrewafony.testapp.designsystem.R.drawable.test_image,
                 name = "Andrew Afanasiev",
                 message = "Last message",
-                onChatClick = {}
+                onChatClick = navigateToChat
             )
         }
     }
@@ -97,67 +98,6 @@ fun HomeScreenChatItem(
             }
         },
     )
-
-//
-//    Row(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .clickable { onChatClick(name) },
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        AsyncImage(
-//            model = image,
-//            contentDescription = "",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp)
-//                .clip(CircleShape)
-//                .size(56.dp)
-//        )
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth(0.85f)
-//        ) {
-//            Text(
-//                text = name,
-//                style = MaterialTheme.typography.bodyLarge,
-//                fontWeight = FontWeight.W500,
-//                overflow = TextOverflow.Ellipsis,
-//                maxLines = 1
-//            )
-//            Spacer(modifier = Modifier.size(8.dp))
-//            Text(
-//                text = message,
-//                style = MaterialTheme.typography.bodySmall,
-//                overflow = TextOverflow.Ellipsis,
-//                maxLines = 1
-//            )
-//        }
-//
-//        Column(
-//            modifier = Modifier,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Text(
-//                text = "12:43",
-//                style = MaterialTheme.typography.labelMedium,
-//            )
-//            Spacer(modifier = Modifier.size(4.dp))
-//            Box(
-//                modifier = Modifier
-//                    .size(18.dp)
-//                    .clip(CircleShape)
-//                    .background(MaterialTheme.colorScheme.primary),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Text(
-//                    text = "2",
-//                    style = MaterialTheme.typography.labelSmall,
-//                )
-//            }
-//        }
-//
-//    }
 }
 
 @Preview
@@ -169,7 +109,9 @@ private fun HomeScreenChatsPrev() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            HomeScreenChats()
+            HomeScreenChats(
+                navigateToChat = {}
+            )
         }
     }
 }

@@ -11,6 +11,7 @@ android {
 dependencies {
 
     implementation(projects.core.designsystem)
+    api(projects.features.chatApi)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)

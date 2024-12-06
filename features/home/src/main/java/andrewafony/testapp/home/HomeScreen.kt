@@ -26,16 +26,19 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToChat: (String) -> Unit
 ) {
 
     HomeScreenContent(
-        modifier = modifier
+        modifier = modifier,
+        navigateToChat = navigateToChat
     )
 }
 
 @Composable
 fun HomeScreenContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToChat: (String) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -45,7 +48,9 @@ fun HomeScreenContent(
         HomeScreenTitle()
         HomeScreenStories()
         HomeScreenChatsTitle()
-        HomeScreenChats()
+        HomeScreenChats(
+            navigateToChat = navigateToChat
+        )
     }
 }
 
@@ -105,6 +110,8 @@ fun HomeScreenChatsTitle(
 @Composable
 private fun HomeScreenPrev() {
     andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
-        HomeScreenContent()
+        HomeScreenContent(
+            navigateToChat = {}
+        )
     }
 }
