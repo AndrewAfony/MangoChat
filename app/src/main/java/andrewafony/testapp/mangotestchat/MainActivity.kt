@@ -149,6 +149,9 @@ fun BottomNavigation(
             NavigationBarItem(
                 selected = currentRoute == "settings",
                 onClick = navigateToProfile,
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                ),
                 icon = {
                     Icon(
                         imageVector = Icons.Outlined.Settings,
