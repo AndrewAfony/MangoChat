@@ -4,11 +4,9 @@ plugins {
 }
 
 android {
-    namespace = "andrewafony.testapp.domain"
-
+    namespace = "andrewafony.testapp.profile_api"
 }
 
 dependencies {
-
-
+    api(projects.core.featureApi)
 }

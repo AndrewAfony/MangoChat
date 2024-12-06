@@ -4,11 +4,8 @@ plugins {
 }
 
 android {
-    namespace = "andrewafony.testapp.domain"
-
+    namespace = "andrewafony.testapp.chat_api"
 }
 
 dependencies {
-
-
 }

@@ -31,6 +31,9 @@ dependencies {
     implementation(projects.features.home)
     implementation(projects.features.profile)
     implementation(projects.features.chat)
+    implementation(projects.features.settings)
+
+    implementation(projects.core.featureApi)
 
     implementation(projects.core.designsystem)
 
@@ -42,7 +45,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
 //    implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
 
     testImplementation(libs.junit)
 
@@ -53,7 +55,4 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // ==== Koin ====
-    implementation (libs.koin.androidx.compose)
 }

@@ -4,19 +4,21 @@ plugins {
 }
 
 android {
-    namespace = "andrewafony.testapp.profile"
+    namespace = "andrewafony.testapp.settings"
 
 }
 
 dependencies {
 
     implementation(projects.core.designsystem)
-    api(projects.features.profileApi)
+    implementation(projects.features.profileApi)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)
-    debugImplementation(libs.ui.tooling)
+
+    api(projects.features.settingsApi)
 
     // ==== Coil ====
     implementation(libs.coil.compose)
+    debugImplementation(libs.ui.tooling)
 }
