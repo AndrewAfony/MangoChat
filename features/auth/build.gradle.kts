@@ -10,6 +10,7 @@ android {
 dependencies {
 
     implementation(projects.core.designsystem)
+    implementation(projects.features.homeApi)
 
     api(projects.features.authApi)
 
@@ -17,5 +18,5 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.ui.tooling)
 
-    implementation("io.github.joelkanyi:komposecountrycodepicker:1.2.8")
+    implementation(libs.country.code.picker)
 }

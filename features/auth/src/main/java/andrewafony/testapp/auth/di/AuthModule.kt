@@ -6,5 +6,5 @@ import org.koin.dsl.module
 
 val authModule = module {
 
-    single<AuthFeatureApi> { AuthFeatureImpl() }
+    single<AuthFeatureApi> { AuthFeatureImpl(get()) }
 }
