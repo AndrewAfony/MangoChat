@@ -1,6 +1,7 @@
 package andrewafony.testapp.auth.login
 
 import andrewafony.testapp.auth.registration.RegistrationScreenContent
+import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
@@ -78,29 +79,15 @@ fun LoginScreenContent(
             onEdit = {}
         )
 
-        Box(
-            modifier = Modifier
-                .animateContentSize(alignment = Alignment.CenterEnd)
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 12.dp)
-                .height(50.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.primary)
-                .clickable {  },
-            contentAlignment = Alignment.Center
-        ) {
-            if (true) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 1.dp,
-                    color = Color.White
-                )
-            } else {
-                Text(text = "Авторизация")
-            }
-        }
+        MangoButtonWithLoader(
+          modifier = Modifier
+              .fillMaxWidth()
+              .padding(start = 20.dp, end = 20.dp, top = 12.dp),
+            text = "Авторизация",
+            isLoader = true,
+            onClick = {}
+        )
     }
-
 }
 
 @Preview

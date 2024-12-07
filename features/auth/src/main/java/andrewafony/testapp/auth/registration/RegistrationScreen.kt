@@ -1,5 +1,6 @@
 package andrewafony.testapp.auth.registration
 
+import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
 import android.util.Log
@@ -167,26 +168,14 @@ fun RegistrationScreenContent(
                     Icon(Icons.Default.KeyboardArrowLeft, null)
                 }
             }
-            Box(
+            MangoButtonWithLoader(
                 modifier = Modifier
-                    .animateContentSize(alignment = Alignment.CenterEnd)
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primary)
-                    .clickable { isCode = !isCode },
-                contentAlignment = Alignment.Center
-            ) {
-                if (isCode) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 1.dp,
-                        color = Color.White
-                    )
-                } else {
-                    Text(text = "Регистрация")
-                }
-            }
+                    .fillMaxWidth(),
+                text = "Регистрация",
+                isLoader = isCode,
+                animatedContentAlignment = Alignment.CenterEnd,
+                onClick = { isCode = !isCode }
+            )
         }
     }
 }
