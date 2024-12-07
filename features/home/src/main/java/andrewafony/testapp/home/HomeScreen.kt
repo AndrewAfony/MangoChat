@@ -1,6 +1,8 @@
 package andrewafony.testapp.home
 
+import andrewafony.testapp.designsystem.SetWindowSoftInputMode
 import andrewafony.testapp.home.stories.HomeScreenStories
+import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +30,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToChat: (String) -> Unit
 ) {
+
+    SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
     HomeScreenContent(
         modifier = modifier,

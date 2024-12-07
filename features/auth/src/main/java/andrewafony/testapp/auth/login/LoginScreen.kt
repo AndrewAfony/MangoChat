@@ -1,8 +1,10 @@
 package andrewafony.testapp.auth.login
 
+import andrewafony.testapp.designsystem.SetWindowSoftInputMode
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import android.view.WindowManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +32,7 @@ import androidx.compose.ui.unit.dp
 fun LoginScreen(
     modifier: Modifier = Modifier,
     navigateToRegistration: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ) {
 
     LoginScreenContent(
@@ -44,8 +46,10 @@ fun LoginScreen(
 fun LoginScreenContent(
     modifier: Modifier = Modifier,
     navigateToHome: () -> Unit,
-    navigateToRegistration: () -> Unit
+    navigateToRegistration: () -> Unit,
 ) {
+
+    SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
     val linkText = remember {
         buildAnnotatedString {

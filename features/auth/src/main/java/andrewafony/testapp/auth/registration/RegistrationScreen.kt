@@ -162,8 +162,8 @@ fun RegistrationScreenContent(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
             AnimatedVisibility(
                 modifier = Modifier,
@@ -188,7 +188,7 @@ fun RegistrationScreenContent(
             }
             MangoButtonWithLoader(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth(0.9f),
                 text = "Регистрация",
                 isLoader = isCode,
                 animatedContentAlignment = Alignment.CenterEnd,

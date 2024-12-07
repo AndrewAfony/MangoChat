@@ -26,7 +26,9 @@ class AuthFeatureImpl(
         navGraphBuilder.composable(authRoute) {
             LoginScreen(
                 modifier = modifier,
-                navigateToHome = { navController.navigate(homeFeature.route) },
+                navigateToHome = { navController.navigate(homeFeature.route) {
+                    popUpTo(homeFeature.route) { inclusive = true }
+                } },
                 navigateToRegistration = { navController.navigate(registrationRoute) }
             )
         }

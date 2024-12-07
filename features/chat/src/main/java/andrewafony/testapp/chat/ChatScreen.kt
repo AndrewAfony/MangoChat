@@ -97,19 +97,11 @@ fun ChatScreenContent(
             modifier = Modifier
                 .weight(1f)
                 .padding(16.dp),
+            reverseLayout = true,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Text(
-                    text = "Today",
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier
-                        .padding(vertical = 12.dp)
-                )
-            }
-            itemsIndexed(messages) { index, item ->
 
+            itemsIndexed(messages) { index, item ->
                 if (index != 0 && messages[index].user != messages[index-1].user) {
                     Message(
                         modifier = Modifier.padding(top = 24.dp),
@@ -122,6 +114,15 @@ fun ChatScreenContent(
                         isUserMe = user == item.user
                     )
                 }
+            }
+            item {
+                Text(
+                    text = "Today",
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
             }
         }
         ChatScreenBottomBar()
