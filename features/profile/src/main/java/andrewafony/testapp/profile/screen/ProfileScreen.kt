@@ -1,8 +1,15 @@
-package andrewafony.testapp.profile
+package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.toast
+import andrewafony.testapp.profile.Birthday
+import andrewafony.testapp.profile.ProfileViewModel
+import andrewafony.testapp.profile.User
+import andrewafony.testapp.profile.screen.components.ProfileAboutItem
+import andrewafony.testapp.profile.screen.components.ProfileItem
+import android.net.Uri
 import android.util.Log
-import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -26,9 +33,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,37 +62,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-
-data class User(
-    val name: String,
-    val username: String,
-    val image: String,
-    val phone: String,
-    val birthday: String,
-    val city: String,
-    val zodiac: String,
-)
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel = koinViewModel(),
     navigateToNameEdit: () -> Unit,
     navigateToCityEdit: () -> Unit,
     navigateBack: () -> Unit,
 ) {
 
+    val userState by profileViewModel.userState.collectAsStateWithLifecycle()
+
     ProfileScreenContent(
         modifier = modifier,
-        user = User(
-            name = "Andrew Afanasiev",
-            username = "@andrew_afony",
-            image = "",
-            phone = "+7 (952) 773-56-92",
-            birthday = "24.05.2001",
-            city = "Нижний Новгород",
-            zodiac = "Близнецы"
-        ),
+        user = userState,
+        updateBirthday = profileViewModel::updateBirthday,
+        updateImage = profileViewModel::updateImage,
         navigateToNameEdit = navigateToNameEdit,
         navigateToCityEdit = navigateToCityEdit,
         navigateBack = navigateBack
@@ -94,10 +94,16 @@ fun ProfileScreen(
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
     user: User,
+    updateImage: (Uri?) -> Unit,
+    updateBirthday: (Birthday) -> Unit,
     navigateToNameEdit: () -> Unit,
     navigateToCityEdit: () -> Unit,
     navigateBack: () -> Unit,
 ) {
+
+    SideEffect {
+        Log.d("MyHelper", "user: ${user.name} ")
+    }
 
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -106,10 +112,16 @@ fun ProfileScreenContent(
     val birthdayBottomSheetState = rememberModalBottomSheetState()
 
     val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     val iconEdit = rememberVectorPainter(andrewafony.testapp.designsystem.icons.IconPhoto)
     val primaryColor = MaterialTheme.colorScheme.primary
     var editImageButtonOffset = remember { Offset(0f, 0f) }
+
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            updateImage(uri)
+        }
 
     Column(
         modifier = modifier
@@ -123,7 +135,7 @@ fun ProfileScreenContent(
         ProfileScreenTopBar(navigateBack = navigateBack)
 
         AsyncImage(
-            model = andrewafony.testapp.designsystem.R.drawable.test_image,
+            model = user.image,
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -135,8 +147,7 @@ fun ProfileScreenContent(
                 .pointerInput(Unit) {
                     detectTapGestures { tapOffset ->
                         if (tapOffset.x > editImageButtonOffset.x && tapOffset.y > editImageButtonOffset.y) {
-                            Log.d("MyHelper", "$tapOffset")
-                            // TODO edit photo
+                            launcher.launch("image/*")
                         }
                     }
                 }
@@ -198,7 +209,7 @@ fun ProfileScreenContent(
         )
 
         ProfileScreenItems(
-            name = user.name,
+            name = "${user.name} ${user.surname}",
             birthday = user.birthday,
             city = user.city,
             onNameChange = navigateToNameEdit,
@@ -206,7 +217,6 @@ fun ProfileScreenContent(
             onBirthdayChange = { isBirthdayBottomSheet = true }
         )
 
-        // TODO keyboard overlap bug
         ProfileAboutItem(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -214,8 +224,16 @@ fun ProfileScreenContent(
 
         if (isBirthdayBottomSheet) {
             BirthdayEditBottomSheet(
+                birthday = user.birthday,
                 sheetState = birthdayBottomSheetState,
-                onDismiss = { isBirthdayBottomSheet = false }
+                updateBirthday = updateBirthday,
+                onDismiss = {
+                    scope.launch { birthdayBottomSheetState.hide() }.invokeOnCompletion {
+                        if(!birthdayBottomSheetState.isVisible) {
+                            isBirthdayBottomSheet = false
+                        }
+                    }
+                }
             )
         }
 
@@ -249,11 +267,17 @@ fun ProfileScreenItems(
     modifier: Modifier = Modifier,
     name: String,
     city: String,
-    birthday: String,
+    birthday: Birthday,
     onNameChange: () -> Unit,
     onCityChange: () -> Unit,
     onBirthdayChange: () -> Unit,
 ) {
+
+    val birthdayDay = rememberSaveable(birthday) {
+        if (birthday.day.toInt() < 10) "0${birthday.day}"
+        else birthday.day
+    }
+
     Column(
         modifier = modifier
             .imePadding()
@@ -278,7 +302,7 @@ fun ProfileScreenItems(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Дата рождения",
-            content = birthday,
+            content = "$birthdayDay.${birthday.month.number}.${birthday.year}",
             isChangeable = true,
             onClick = onBirthdayChange
         )
@@ -296,7 +320,7 @@ fun ProfileUnchangeableItemsGroup(
     modifier: Modifier = Modifier,
     username: String,
     phone: String,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
 ) {
 
     Column(

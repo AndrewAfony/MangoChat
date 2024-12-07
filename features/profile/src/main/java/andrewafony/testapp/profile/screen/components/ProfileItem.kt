@@ -1,4 +1,4 @@
-package andrewafony.testapp.profile
+package andrewafony.testapp.profile.screen.components
 
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import androidx.compose.foundation.clickable

@@ -1,8 +1,10 @@
 package andrewafony.testapp.profile.navigation
 
-import andrewafony.testapp.profile.EditCityScreen
-import andrewafony.testapp.profile.EditNameScreen
-import andrewafony.testapp.profile.ProfileScreen
+import andrewafony.testapp.feature_api.viewModel
+import andrewafony.testapp.profile.ProfileViewModel
+import andrewafony.testapp.profile.screen.EditCityScreen
+import andrewafony.testapp.profile.screen.EditNameScreen
+import andrewafony.testapp.profile.screen.ProfileScreen
 import andrewafony.testapp.profile_api.ProfileFeatureApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -36,14 +38,18 @@ class ProfileFeatureImpl internal constructor() : ProfileFeatureApi {
         }
 
         navGraphBuilder.composable(route = profileNameEditRoute) {
+            val profileViewModel: ProfileViewModel = navController.previousBackStackEntry.viewModel()
             EditNameScreen(
                 modifier = modifier,
+                viewModel = profileViewModel,
                 navigateBack = { navController.popBackStack() }
             )
         }
 
         navGraphBuilder.composable(route = profileCityEditRoute) {
+            val profileViewModel: ProfileViewModel = navController.previousBackStackEntry.viewModel()
             EditCityScreen(
+                viewModel = profileViewModel,
                 navigateBack = { navController.popBackStack() }
             )
         }

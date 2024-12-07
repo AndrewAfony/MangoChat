@@ -1,6 +1,7 @@
-package andrewafony.testapp.profile
+package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import andrewafony.testapp.profile.ProfileViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,19 +14,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun EditCityScreen(
     modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel,
     navigateBack: () -> Unit
 ) {
 
+    val userState by viewModel.userState.collectAsStateWithLifecycle()
+
     EditCityScreenContent(
         modifier = modifier,
+        city = userState.city,
+        updateCity = viewModel::updateCity,
         navigateBack = navigateBack
     )
 }
@@ -33,8 +44,12 @@ fun EditCityScreen(
 @Composable
 fun EditCityScreenContent(
     modifier: Modifier = Modifier,
+    city: String,
+    updateCity: (String) -> Unit,
     navigateBack: () -> Unit
 ) {
+
+    var currentCity by rememberSaveable { mutableStateOf(city) }
 
     Column(
         modifier = modifier
@@ -53,9 +68,9 @@ fun EditCityScreenContent(
         
         EditTextField(
             modifier = Modifier.padding(vertical = 12.dp),
-            field = "",
+            field = currentCity,
             placeholder = "Город",
-            onEdit = {}
+            onEdit = { currentCity = it }
         )
 
         Button(
@@ -64,7 +79,7 @@ fun EditCityScreenContent(
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             onClick = {
-                // todo save
+                updateCity(currentCity)
                 navigateBack()
             }
         ) {
@@ -79,6 +94,8 @@ private fun EditCityScreenPrev() {
     MangoTestChatTheme {
         Surface {
             EditCityScreenContent(
+                city = "Нижний Новгород",
+                updateCity = {},
                 navigateBack = {}
             )
         }

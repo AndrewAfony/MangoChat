@@ -1,4 +1,4 @@
-package andrewafony.testapp.profile
+package andrewafony.testapp.profile.screen.components
 
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth

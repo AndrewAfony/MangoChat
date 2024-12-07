@@ -1,4 +1,4 @@
-package andrewafony.testapp.designsystem
+package andrewafony.testapp.designsystem.animation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition

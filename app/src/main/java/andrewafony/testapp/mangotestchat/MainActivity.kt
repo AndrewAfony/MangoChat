@@ -1,11 +1,10 @@
 package andrewafony.testapp.mangotestchat
 
-import andrewafony.testapp.designsystem.Animation
+import andrewafony.testapp.designsystem.animation.Animation
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.home_api.HomeFeatureApi
 import andrewafony.testapp.settings_api.SettingsFeatureApi
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -65,10 +64,10 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         AnimatedVisibility(
-                            visible = currentRoute in listOf("home", "settings"),
+                            visible = currentRoute == "home" || currentRoute == "settings",
                             enter = Animation.slideInWithScaleAndFade,
                             exit = Animation.slideOutWithScaleAndFade
-                        ) {
+                        ) { // TODO bug animation on app start
                             BottomNavigation(
                                 currentRoute = currentRoute ?: "",
                                 navigateToHome = {
