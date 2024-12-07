@@ -1,5 +1,9 @@
 package andrewafony.testapp.chat
 
+import andrewafony.testapp.domain.model.ChatMessage
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +17,9 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,6 +32,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,41 +46,27 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import org.koin.androidx.compose.koinViewModel
+import java.util.UUID
 
-data class ChatMessage(
-    val message: String,
-    val user: String,
-    val timestamp: String
-)
 
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
-    navigateBack: () -> Unit
+    viewModel: ChatViewModel = koinViewModel(),
+    navigateBack: () -> Unit,
 ) {
+
+    val messages = viewModel.messages
 
     ChatScreenContent(
         modifier = modifier,
-        user = "Andrew Afanasiev",
+        user = "User",
         image = "",
-        messages = listOf<ChatMessage>(
-            ChatMessage(
-                message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
-                user = "Andrew Afanasiev",
-                timestamp = ""
-            ),
-            ChatMessage(
-                message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
-                user = "Andrew Afanasiev",
-                timestamp = ""
-            ),
-            ChatMessage(
-                message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
-                user = "User",
-                timestamp = ""
-            )
-        ),
+        messages = messages,
+        addItem = viewModel::addItem,
         navigateBack = navigateBack
     )
 }
@@ -81,8 +77,11 @@ fun ChatScreenContent(
     messages: List<ChatMessage>,
     user: String,
     image: String,
-    navigateBack: () -> Unit
+    addItem: () -> Unit,
+    navigateBack: () -> Unit,
 ) {
+
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -98,35 +97,56 @@ fun ChatScreenContent(
             modifier = Modifier
                 .weight(1f)
                 .padding(16.dp),
-            reverseLayout = true,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
         ) {
-
-            itemsIndexed(messages) { index, item ->
-                if (index != 0 && messages[index].user != messages[index-1].user) {
-                    Message(
-                        modifier = Modifier.padding(top = 24.dp),
-                        message = item.message,
-                        isUserMe = user == item.user
-                    )
-                } else {
-                    Message(
-                        message = item.message,
-                        isUserMe = user == item.user
-                    )
-                }
-            }
-            item {
-                Text(
-                    text = "Today",
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.labelLarge,
+            // TODO При добавлении сообщения, последнее сообщение не видно (нужно прокручивать список)
+            items(messages, key = { it.id }) { item ->
+                Message(
                     modifier = Modifier
-                        .padding(vertical = 12.dp)
+                        .animateItem(
+                            fadeInSpec = tween(durationMillis = 250),
+                            fadeOutSpec = tween(durationMillis = 100),
+                            placementSpec = spring(
+                                stiffness = Spring.StiffnessLow,
+                                dampingRatio = Spring.DampingRatioLowBouncy
+                            )
+                        )
+                        .padding(top = 24.dp),
+                    message = item.message,
+                    isUserMe = user == item.user
                 )
             }
+
+//            itemsIndexed(messages, key = { _, item -> item.id }) { index, item ->
+//                if (index != 0 && messages[index].user != messages[index - 1].user) {
+//                    Message(
+//                        modifier = Modifier
+//                            .padding(top = 24.dp)
+//                            .animateItem(),
+//                        message = item.message,
+//                        isUserMe = user == item.user
+//                    )
+//                } else {
+//                    Message(
+//                        message = item.message,
+//                        isUserMe = user == item.user
+//                    )
+//                }
+//            }
+//            item {
+//                Text(
+//                    text = "Today",
+//                    color = Color.Gray,
+//                    style = MaterialTheme.typography.labelLarge,
+//                    modifier = Modifier
+//                        .padding(vertical = 12.dp)
+//                )
+//            }
         }
-        ChatScreenBottomBar()
+        ChatScreenBottomBar(
+            onPlusClick = addItem
+        )
     }
 
 }
@@ -137,7 +157,7 @@ fun ChatScreenTopBar(
     image: String,
     name: String,
     status: String,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -208,7 +228,10 @@ fun ChatScreenTopBar(
 }
 
 @Composable
-fun ChatScreenBottomBar(modifier: Modifier = Modifier) {
+fun ChatScreenBottomBar(
+    modifier: Modifier = Modifier,
+    onPlusClick: () -> Unit,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -226,7 +249,9 @@ fun ChatScreenBottomBar(modifier: Modifier = Modifier) {
     ) {
         Icon(
             imageVector = Icons.Outlined.Add,
-            contentDescription = null
+            contentDescription = null,
+            modifier = Modifier
+                .clickable { onPlusClick() }
         )
         TextField(
             value = "text",
@@ -268,30 +293,36 @@ private fun ChatScreenPrev() {
                     ChatMessage(
                         message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
                         user = "Andrew Afanasiev",
-                        timestamp = ""
+                        timestamp = "",
+                        id = 1
                     ),
                     ChatMessage(
                         message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
                         user = "User",
-                        timestamp = ""
+                        timestamp = "",
+                        id = 2
                     ),
                     ChatMessage(
                         message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
                         user = "User",
-                        timestamp = ""
+                        timestamp = "",
+                        id = 3
                     ),
                     ChatMessage(
                         message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
                         user = "Andrew Afanasiev",
-                        timestamp = ""
+                        timestamp = "",
+                        id = 4
                     ),
                     ChatMessage(
-                        message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
+                        message = "Test 1",
                         user = "Andrew Afanasiev",
-                        timestamp = ""
+                        timestamp = "",
+                        id = 5
                     )
                 ),
-                navigateBack = {}
+                navigateBack = {},
+                addItem = {}
             )
         }
     }

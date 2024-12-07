@@ -10,6 +10,7 @@ android {
 
 dependencies {
 
+    implementation(projects.domain)
     implementation(projects.core.designsystem)
     api(projects.features.chatApi)
 

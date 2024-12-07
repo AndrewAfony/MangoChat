@@ -24,7 +24,6 @@ class ProfileViewModel : ViewModel() {
 
     fun updateName(name: String, surname: String) {
         _userState.update { it.copy(name = name, surname = surname) }
-        Log.d("MyHelper", "updateName: $name $surname | ${userState.value}")
     }
 
     fun updateCity(city: String) {

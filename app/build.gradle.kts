@@ -33,6 +33,8 @@ dependencies {
     implementation(projects.features.chat)
     implementation(projects.features.settings)
 
+    implementation(projects.data)
+
     implementation(projects.core.featureApi)
 
     implementation(projects.core.designsystem)
