@@ -61,16 +61,19 @@ import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryC
 @Composable
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
+    navigateBack: () -> Unit
 ) {
 
     RegistrationScreenContent(
-        modifier = modifier
+        modifier = modifier,
+        navigateBack = navigateBack
     )
 }
 
 @Composable
 fun RegistrationScreenContent(
     modifier: Modifier = Modifier,
+    navigateBack: () -> Unit
 ) {
 
     val locale = Locale.current
@@ -98,6 +101,21 @@ fun RegistrationScreenContent(
         label = "two"
     ) { isVisible ->
         if (!isVisible) width.dp else 0.dp
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.TopStart
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.KeyboardArrowLeft,
+            contentDescription = null,
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable { navigateBack() }
+                .padding(16.dp)
+        )
     }
 
     Column(
@@ -185,7 +203,9 @@ fun RegistrationScreenContent(
 private fun RegistrationScreenPrev() {
     MangoTestChatTheme {
         Surface {
-            RegistrationScreenContent()
+            RegistrationScreenContent(
+                navigateBack = {}
+            )
         }
     }
 }

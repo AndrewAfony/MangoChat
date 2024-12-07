@@ -33,7 +33,8 @@ class AuthFeatureImpl(
 
         navGraphBuilder.composable(registrationRoute) {
             RegistrationScreen(
-                modifier = modifier
+                modifier = modifier,
+                navigateBack = { navController.popBackStack() }
             )
         }
     }
