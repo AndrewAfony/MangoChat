@@ -22,7 +22,7 @@ class ProfileFeatureImpl internal constructor() : ProfileFeatureApi {
         navController: NavHostController,
         modifier: Modifier,
     ) {
-        navGraphBuilder.composable(profileRoute) {
+        navGraphBuilder.composable(route = profileRoute) {
             ProfileScreen(
                 modifier = modifier,
                 navigateToNameEdit = {
@@ -35,14 +35,14 @@ class ProfileFeatureImpl internal constructor() : ProfileFeatureApi {
             )
         }
 
-        navGraphBuilder.composable(profileNameEditRoute) {
+        navGraphBuilder.composable(route = profileNameEditRoute) {
             EditNameScreen(
                 modifier = modifier,
                 navigateBack = { navController.popBackStack() }
             )
         }
 
-        navGraphBuilder.composable(profileCityEditRoute) {
+        navGraphBuilder.composable(route = profileCityEditRoute) {
             EditCityScreen(
                 navigateBack = { navController.popBackStack() }
             )

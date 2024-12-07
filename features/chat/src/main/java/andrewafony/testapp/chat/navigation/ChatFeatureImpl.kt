@@ -16,7 +16,9 @@ class ChatFeatureImpl: ChatFeatureApi {
         navController: androidx.navigation.NavHostController,
         modifier: Modifier,
     ) {
-        navGraphBuilder.composable(chatRoute) {
+        navGraphBuilder.composable(
+            route = chatRoute
+        ) {
             ChatScreen(
                 modifier = modifier,
                 navigateBack = { navController.popBackStack() }

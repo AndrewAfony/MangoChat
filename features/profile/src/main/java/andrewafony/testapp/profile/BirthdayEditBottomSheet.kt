@@ -1,13 +1,13 @@
 package andrewafony.testapp.profile
 
-import andrewafony.testapp.designsystem.component.Picker
-import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
@@ -28,6 +28,7 @@ fun BirthdayEditBottomSheet(
     ModalBottomSheet(
         modifier = modifier,
         sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
         onDismissRequest = onDismiss
     ) {
         BirthdayEditBottomSheetContent()
@@ -40,7 +41,8 @@ fun BirthdayEditBottomSheetContent(
 ) {
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
         Row(

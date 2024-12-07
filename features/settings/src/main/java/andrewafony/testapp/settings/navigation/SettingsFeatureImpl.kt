@@ -19,9 +19,11 @@ class SettingsFeatureImpl internal constructor(
     override fun registerGraph(
         navGraphBuilder: NavGraphBuilder,
         navController: NavHostController,
-        modifier: Modifier,
+        modifier: Modifier
     ) {
-        navGraphBuilder.composable(settingsRoute) {
+        navGraphBuilder.composable(
+            route = settingsRoute
+        ) {
             SettingsScreen(
                 modifier = modifier,
                 navigateToProfile = { navController.navigate(profile.route) }

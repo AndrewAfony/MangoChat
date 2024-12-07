@@ -19,7 +19,7 @@ class HomeFeatureImpl internal constructor(
     override fun registerGraph(
         navGraphBuilder: NavGraphBuilder,
         navController: NavHostController,
-        modifier: Modifier,
+        modifier: Modifier
     ) {
         navGraphBuilder.composable(homeRoute) {
             HomeScreen(

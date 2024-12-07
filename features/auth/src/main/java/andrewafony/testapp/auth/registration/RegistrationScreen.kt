@@ -103,24 +103,10 @@ fun RegistrationScreenContent(
         if (!isVisible) width.dp else 0.dp
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.TopStart
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.KeyboardArrowLeft,
-            contentDescription = null,
-            modifier = Modifier
-                .clip(CircleShape)
-                .clickable { navigateBack() }
-                .padding(16.dp)
-        )
-    }
-
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -195,6 +181,21 @@ fun RegistrationScreenContent(
                 onClick = { isCode = !isCode }
             )
         }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.TopStart
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.KeyboardArrowLeft,
+            contentDescription = null,
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable { navigateBack() }
+                .padding(16.dp)
+        )
     }
 }
 

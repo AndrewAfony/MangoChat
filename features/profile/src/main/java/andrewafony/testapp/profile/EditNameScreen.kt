@@ -1,5 +1,6 @@
 package andrewafony.testapp.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +42,8 @@ fun EditNameScreenContent(
 
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 

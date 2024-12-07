@@ -45,7 +45,8 @@ fun SettingsScreenContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(bottom = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(

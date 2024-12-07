@@ -1,12 +1,14 @@
 package andrewafony.testapp.mangotestchat
 
+import andrewafony.testapp.designsystem.Animation
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.home_api.HomeFeatureApi
-import andrewafony.testapp.profile_api.ProfileFeatureApi
 import andrewafony.testapp.settings_api.SettingsFeatureApi
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,12 +35,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
@@ -61,23 +64,33 @@ class MainActivity : ComponentActivity() {
             MangoTestChatTheme {
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("home", "settings"))
+                        AnimatedVisibility(
+                            visible = currentRoute in listOf("home", "settings"),
+                            enter = Animation.slideInWithScaleAndFade,
+                            exit = Animation.slideOutWithScaleAndFade
+                        ) {
                             BottomNavigation(
                                 currentRoute = currentRoute ?: "",
-                                navigateToHome = { navController.navigate(homeFeature.route) {
-                                    popUpTo(homeFeature.route) { inclusive = true}
-                                } },
-                                navigateToProfile = { navController.navigate(settingsFeature.route) {
-                                    popUpTo(settingsFeature.route) { inclusive = true}
-                                } }
+                                navigateToHome = {
+                                    navController.navigate(homeFeature.route) {
+                                        popUpTo(homeFeature.route) { inclusive = true }
+                                    }
+                                },
+                                navigateToSettings = {
+                                    navController.navigate(settingsFeature.route) {
+                                        popUpTo(settingsFeature.route) { inclusive = true }
+                                    }
+                                }
                             )
+                        }
                     },
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
                     AppNavigationGraph(
-                        modifier = Modifier.padding(innerPadding),
+//                        modifier = Modifier.padding(innerPadding),
                         navController = navController,
-                        featureProvider = featureProvider
+                        featureProvider = featureProvider,
+                        currentRoute = currentRoute
                     )
                 }
             }
@@ -90,7 +103,7 @@ fun BottomNavigation(
     modifier: Modifier = Modifier,
     currentRoute: String,
     navigateToHome: () -> Unit,
-    navigateToProfile: () -> Unit,
+    navigateToSettings: () -> Unit,
 ) {
 
     // TODO check click through
@@ -98,6 +111,13 @@ fun BottomNavigation(
     NavigationBar(
         modifier = modifier
             .fillMaxWidth()
+            .drawBehind {
+                drawLine(
+                    color = Color.LightGray,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f)
+                )
+            }
     ) {
         Row(
             modifier = Modifier
@@ -125,7 +145,6 @@ fun BottomNavigation(
 
             Row(
                 modifier = Modifier
-                    .padding(vertical = 16.dp)
                     .clip(CircleShape)
                     .clickable { }
                     .weight(2f)
@@ -140,7 +159,7 @@ fun BottomNavigation(
                 )
                 Spacer(modifier = Modifier.padding(4.dp))
                 Text(
-                    modifier = Modifier.padding(vertical = 12.dp),
+                    modifier = Modifier.padding(vertical = 10.dp),
                     text = "New chat",
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White
@@ -149,7 +168,7 @@ fun BottomNavigation(
 
             NavigationBarItem(
                 selected = currentRoute == "settings",
-                onClick = navigateToProfile,
+                onClick = navigateToSettings,
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                 ),
@@ -170,7 +189,7 @@ fun BottomNavigation(
 private fun MainActivityPrev() {
     MangoTestChatTheme {
         BottomNavigation(
-            navigateToProfile = {},
+            navigateToSettings = {},
             navigateToHome = {},
             currentRoute = "home"
         )

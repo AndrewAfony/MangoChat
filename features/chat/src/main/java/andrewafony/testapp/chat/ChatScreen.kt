@@ -86,6 +86,7 @@ fun ChatScreenContent(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         ChatScreenTopBar(
             image = image,

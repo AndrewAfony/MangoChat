@@ -5,6 +5,7 @@ import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import android.view.WindowManager
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,7 +69,8 @@ fun LoginScreenContent(
 
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

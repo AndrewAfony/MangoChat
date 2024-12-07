@@ -21,9 +21,11 @@ class AuthFeatureImpl(
     override fun registerGraph(
         navGraphBuilder: NavGraphBuilder,
         navController: NavHostController,
-        modifier: Modifier,
+        modifier: Modifier
     ) {
-        navGraphBuilder.composable(authRoute) {
+        navGraphBuilder.composable(
+            route = authRoute
+        ) {
             LoginScreen(
                 modifier = modifier,
                 navigateToHome = { navController.navigate(homeFeature.route) {
@@ -33,7 +35,9 @@ class AuthFeatureImpl(
             )
         }
 
-        navGraphBuilder.composable(registrationRoute) {
+        navGraphBuilder.composable(
+            route = registrationRoute
+        ) {
             RegistrationScreen(
                 modifier = modifier,
                 navigateBack = { navController.popBackStack() }
