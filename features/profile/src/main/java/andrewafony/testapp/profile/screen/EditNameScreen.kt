@@ -1,5 +1,6 @@
 package andrewafony.testapp.profile.screen
 
+import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.profile.ProfileViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -73,7 +74,7 @@ fun EditNameScreenContent(
             style = MaterialTheme.typography.titleMedium
         )
 
-        EditTextField(
+        MangoTextField(
             modifier = Modifier
                 .padding(top = 12.dp),
             field = currentSurname,
@@ -81,7 +82,7 @@ fun EditNameScreenContent(
             onEdit = { currentSurname = it }
         )
 
-        EditTextField(
+        MangoTextField(
             modifier = Modifier
                 .padding(vertical = 12.dp)
                 .height(56.dp),

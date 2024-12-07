@@ -1,5 +1,6 @@
 package andrewafony.testapp.profile.screen
 
+import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.profile.ProfileViewModel
 import androidx.compose.foundation.background
@@ -65,8 +66,8 @@ fun EditCityScreenContent(
             text = "Город",
             style = MaterialTheme.typography.titleMedium
         )
-        
-        EditTextField(
+
+        MangoTextField(
             modifier = Modifier.padding(vertical = 12.dp),
             field = currentCity,
             placeholder = "Город",
