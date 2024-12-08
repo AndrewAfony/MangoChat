@@ -1,7 +1,7 @@
 package andrewafony.testapp.auth.navigation
 
-import andrewafony.testapp.auth.login.LoginScreen
-import andrewafony.testapp.auth.registration.RegistrationScreen
+import andrewafony.testapp.auth.login.RegistrationScreen
+import andrewafony.testapp.auth.registration.LoginScreen
 import andrewafony.testapp.auth_api.AuthFeatureApi
 import andrewafony.testapp.home_api.HomeFeatureApi
 import androidx.compose.ui.Modifier
@@ -16,13 +16,24 @@ class AuthFeatureImpl(
     private val homeFeature: HomeFeatureApi
 ): AuthFeatureApi {
 
-    override val route: String = authRoute
+    override val route: String = registrationRoute
 
     override fun registerGraph(
         navGraphBuilder: NavGraphBuilder,
         navController: NavHostController,
         modifier: Modifier
     ) {
+        navGraphBuilder.composable(
+            route = registrationRoute
+        ) {
+            RegistrationScreen(
+                modifier = modifier,
+                navigateToHome = { navController.navigate(homeFeature.route) {
+                    popUpTo(homeFeature.route) { inclusive = true }
+                } }
+            )
+        }
+
         navGraphBuilder.composable(
             route = authRoute
         ) {
@@ -31,15 +42,6 @@ class AuthFeatureImpl(
                 navigateToHome = { navController.navigate(homeFeature.route) {
                     popUpTo(homeFeature.route) { inclusive = true }
                 } },
-                navigateToRegistration = { navController.navigate(registrationRoute) }
-            )
-        }
-
-        navGraphBuilder.composable(
-            route = registrationRoute
-        ) {
-            RegistrationScreen(
-                modifier = modifier,
                 navigateBack = { navController.popBackStack() }
             )
         }

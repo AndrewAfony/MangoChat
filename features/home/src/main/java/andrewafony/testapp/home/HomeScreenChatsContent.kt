@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -27,13 +28,15 @@ import coil3.compose.AsyncImage
 @Composable
 fun HomeScreenChats(
     modifier: Modifier = Modifier,
+    chatsListState: LazyListState,
     navigateToChat: (String) -> Unit
 ) {
     LazyColumn(
+        state = chatsListState,
         modifier = modifier
             .fillMaxSize(),
     ) {
-        items(10) {
+        items(40) {
             HomeScreenChatItem(
                 image = andrewafony.testapp.designsystem.R.drawable.test_image,
                 name = "Andrew Afanasiev",
@@ -109,8 +112,11 @@ private fun HomeScreenChatsPrev() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            HomeScreenChats(
-                navigateToChat = {}
+            HomeScreenChatItem(
+                image = andrewafony.testapp.designsystem.R.drawable.test_image,
+                name = "Andrew",
+                message = "Message 1",
+                onChatClick = {}
             )
         }
     }

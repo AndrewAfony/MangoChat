@@ -1,18 +1,14 @@
 package andrewafony.testapp.auth.registration
 
+import andrewafony.testapp.designsystem.SetWindowSoftInputMode
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
-import android.util.Log
+import android.view.WindowManager
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,23 +21,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,20 +50,25 @@ import com.joelkanyi.jcomposecountrycodepicker.component.KomposeCountryCodePicke
 import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryCodePickerState
 
 @Composable
-fun RegistrationScreen(
+fun LoginScreen(
     modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit,
     navigateBack: () -> Unit
 ) {
 
-    RegistrationScreenContent(
+    SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
+    LoginScreenContent(
         modifier = modifier,
+        navigateToHome = navigateToHome,
         navigateBack = navigateBack
     )
 }
 
 @Composable
-fun RegistrationScreenContent(
+fun LoginScreenContent(
     modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit,
     navigateBack: () -> Unit
 ) {
 
@@ -112,7 +108,7 @@ fun RegistrationScreenContent(
     ) {
 
         Text(
-            text = "Регистрация",
+            text = "Авторизация",
             style = MaterialTheme.typography.titleLarge
         )
 
@@ -175,7 +171,7 @@ fun RegistrationScreenContent(
             MangoButtonWithLoader(
                 modifier = Modifier
                     .fillMaxWidth(0.9f),
-                text = "Регистрация",
+                text = "Войти",
                 isLoader = isCode,
                 animatedContentAlignment = Alignment.CenterEnd,
                 onClick = { isCode = !isCode }
@@ -201,10 +197,11 @@ fun RegistrationScreenContent(
 
 @Preview
 @Composable
-private fun RegistrationScreenPrev() {
+private fun LogScreenPrev() {
     MangoTestChatTheme {
         Surface {
-            RegistrationScreenContent(
+            LoginScreenContent(
+                navigateToHome = {},
                 navigateBack = {}
             )
         }

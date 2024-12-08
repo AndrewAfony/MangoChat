@@ -5,6 +5,7 @@ import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import android.view.WindowManager
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,57 +16,41 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen(
+fun RegistrationScreen(
     modifier: Modifier = Modifier,
-    navigateToRegistration: () -> Unit,
     navigateToHome: () -> Unit,
 ) {
 
-    LoginScreenContent(
+    RegistrationScreenContent(
         modifier = modifier,
-        navigateToHome = navigateToHome,
-        navigateToRegistration = navigateToRegistration
+        navigateToHome = navigateToHome
     )
 }
 
 @Composable
-fun LoginScreenContent(
+fun RegistrationScreenContent(
     modifier: Modifier = Modifier,
     navigateToHome: () -> Unit,
-    navigateToRegistration: () -> Unit,
 ) {
 
-    SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    val allowedCharsRegex = remember { Regex("^[A-Za-z0-9\\-_]*$") }
 
-    val linkText = remember {
-        buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.Gray)) {
-                append("Нет аккаунта? ")
-            }
-            withLink(
-                LinkAnnotation.Clickable(tag = "registerLink", styles = TextLinkStyles(
-                    style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.W500)
-                ), linkInteractionListener = { navigateToRegistration() })
-            ) {
-                append("Регистрация")
-            }
-        }
-    }
+    var username by rememberSaveable { mutableStateOf("") }
+    var isUsernameError by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -75,7 +60,7 @@ fun LoginScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Авторизация",
+            text = "Регистрация",
             style = MaterialTheme.typography.titleLarge
         )
         MangoTextField(
@@ -83,35 +68,47 @@ fun LoginScreenContent(
                 .padding(top = 32.dp),
             field = "+7 (952) 773-56-92",
             isEnabled = false,
-            placeholder = "Имя пользователя",
+            placeholder = "Номер телефона",
             onEdit = {}
         )
         MangoTextField(
             modifier = Modifier
                 .padding(vertical = 12.dp),
             field = "",
+            isSingleLine = true,
             placeholder = "Имя пользователя",
+            keyboardCapitalization = KeyboardCapitalization.Words,
             onEdit = {}
         )
         MangoTextField(
-            field = "",
+            field = username,
             placeholder = "Username",
-            onEdit = {}
+            isError = isUsernameError,
+            isSingleLine = true,
+            keyboardType = KeyboardType.Ascii,
+            onEdit = {
+                username = it
+                isUsernameError = !it.matches(allowedCharsRegex)
+            }
         )
+        AnimatedVisibility(isUsernameError) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 36.dp, top = 8.dp),
+                text = "Allowed characters: A-Z, a-z, 0-9, '-', '_'",
+                color = Color.Red,
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
 
         MangoButtonWithLoader(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, top = 12.dp),
-            text = "Авторизация",
-            isLoader = true,
+            text = "Войти",
+            isLoader = false,
             onClick = {}
-        )
-
-        Text(
-            modifier = Modifier
-                .padding(top = 24.dp),
-            text = linkText
         )
     }
 }
@@ -121,9 +118,8 @@ fun LoginScreenContent(
 private fun LoginScreenPrev() {
     MangoTestChatTheme {
         Surface {
-            LoginScreenContent(
+            RegistrationScreenContent(
                 navigateToHome = {},
-                navigateToRegistration = {}
             )
         }
     }
