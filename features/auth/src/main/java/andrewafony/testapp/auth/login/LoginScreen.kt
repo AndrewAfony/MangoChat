@@ -1,4 +1,4 @@
-package andrewafony.testapp.auth.registration
+package andrewafony.testapp.auth.login
 
 import andrewafony.testapp.designsystem.SetWindowSoftInputMode
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
@@ -52,24 +52,21 @@ import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryC
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    navigateToHome: () -> Unit,
-    navigateBack: () -> Unit
+    navigateToHome: () -> Unit
 ) {
 
     SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
     LoginScreenContent(
         modifier = modifier,
-        navigateToHome = navigateToHome,
-        navigateBack = navigateBack
+        navigateToHome = navigateToHome
     )
 }
 
 @Composable
 fun LoginScreenContent(
     modifier: Modifier = Modifier,
-    navigateToHome: () -> Unit,
-    navigateBack: () -> Unit
+    navigateToHome: () -> Unit
 ) {
 
     val locale = Locale.current
@@ -178,21 +175,6 @@ fun LoginScreenContent(
             )
         }
     }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.TopStart
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.KeyboardArrowLeft,
-            contentDescription = null,
-            modifier = Modifier
-                .clip(CircleShape)
-                .clickable { navigateBack() }
-                .padding(16.dp)
-        )
-    }
 }
 
 @Preview
@@ -202,7 +184,6 @@ private fun LogScreenPrev() {
         Surface {
             LoginScreenContent(
                 navigateToHome = {},
-                navigateBack = {}
             )
         }
     }

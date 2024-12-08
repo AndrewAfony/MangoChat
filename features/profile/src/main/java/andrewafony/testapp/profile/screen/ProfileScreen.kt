@@ -1,13 +1,11 @@
 package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.toast
-import andrewafony.testapp.domain.model.Birthday
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.profile.ProfileViewModel
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
 import andrewafony.testapp.profile.screen.components.ProfileItem
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -33,12 +31,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +62,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 
 @Composable
 fun ProfileScreen(
@@ -95,7 +92,7 @@ fun ProfileScreenContent(
     modifier: Modifier = Modifier,
     user: User,
     updateImage: (Uri?) -> Unit,
-    updateBirthday: (Birthday) -> Unit,
+    updateBirthday: (LocalDate) -> Unit,
     navigateToNameEdit: () -> Unit,
     navigateToCityEdit: () -> Unit,
     navigateBack: () -> Unit,
@@ -263,16 +260,11 @@ fun ProfileScreenItems(
     modifier: Modifier = Modifier,
     name: String,
     city: String,
-    birthday: Birthday,
+    birthday: LocalDate,
     onNameChange: () -> Unit,
     onCityChange: () -> Unit,
     onBirthdayChange: () -> Unit,
 ) {
-
-    val birthdayDay = rememberSaveable(birthday) {
-        if (birthday.day.toInt() < 10) "0${birthday.day}"
-        else birthday.day
-    }
 
     Column(
         modifier = modifier
@@ -298,7 +290,7 @@ fun ProfileScreenItems(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Дата рождения",
-            content = "$birthdayDay.${birthday.month.number}.${birthday.year}",
+            content = "${birthday.dayOfMonth}.${birthday.month.name}.${birthday.year}",
             isChangeable = true,
             onClick = onBirthdayChange
         )

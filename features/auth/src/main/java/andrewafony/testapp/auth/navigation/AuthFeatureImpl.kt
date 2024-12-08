@@ -1,7 +1,7 @@
 package andrewafony.testapp.auth.navigation
 
-import andrewafony.testapp.auth.login.RegistrationScreen
-import andrewafony.testapp.auth.registration.LoginScreen
+import andrewafony.testapp.auth.registration.RegistrationScreen
+import andrewafony.testapp.auth.login.LoginScreen
 import andrewafony.testapp.auth_api.AuthFeatureApi
 import andrewafony.testapp.home_api.HomeFeatureApi
 import androidx.compose.ui.Modifier
@@ -28,6 +28,7 @@ class AuthFeatureImpl(
         ) {
             RegistrationScreen(
                 modifier = modifier,
+                navigateBack = { navController.popBackStack() },
                 navigateToHome = { navController.navigate(homeFeature.route) {
                     popUpTo(homeFeature.route) { inclusive = true }
                 } }
@@ -41,8 +42,7 @@ class AuthFeatureImpl(
                 modifier = modifier,
                 navigateToHome = { navController.navigate(homeFeature.route) {
                     popUpTo(homeFeature.route) { inclusive = true }
-                } },
-                navigateBack = { navController.popBackStack() }
+                } }
             )
         }
     }

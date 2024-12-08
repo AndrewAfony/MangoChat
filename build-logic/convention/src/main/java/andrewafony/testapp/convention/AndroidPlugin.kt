@@ -3,6 +3,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.api.JavaVersion
+import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.kotlin.dsl.withType
 
@@ -27,6 +28,9 @@ class AndroidPlugin : Plugin<Project> {
                 kotlinOptions {
                     jvmTarget =  JavaVersion.VERSION_11.toString()
                 }
+            }
+            dependencies {
+                add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:2.1.3")
             }
         }
     }

@@ -1,13 +1,12 @@
 package andrewafony.testapp.profile
 
-import andrewafony.testapp.domain.model.Birthday
 import andrewafony.testapp.domain.model.User
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 
 class ProfileViewModel : ViewModel() {
 
@@ -15,12 +14,12 @@ class ProfileViewModel : ViewModel() {
     val userState: StateFlow<User> = _userState
 
     fun updateImage(image: Uri?) {
-        image?.let { photo ->
-            _userState.update { it.copy(image = photo) }
+        image?.let { photo -> // TODO image to base64
+            _userState.update { it.copy(image = image.toString()) }
         }
     }
 
-    fun updateBirthday(birthday: Birthday) {
+    fun updateBirthday(birthday: LocalDate) {
         _userState.update { it.copy(birthday = birthday) }
     }
 

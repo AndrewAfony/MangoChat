@@ -1,4 +1,4 @@
-package andrewafony.testapp.auth.registration
+package andrewafony.testapp.auth.login
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement

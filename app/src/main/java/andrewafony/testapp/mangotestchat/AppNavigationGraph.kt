@@ -29,7 +29,7 @@ fun AppNavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = featureProvider.provide(AuthFeatureApi::class.java).route,
+        startDestination = root.route,
         enterTransition = {
             if (currentRoute == "home" || currentRoute == "settings") {
                 EnterTransition.None

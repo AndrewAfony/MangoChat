@@ -2,8 +2,6 @@ package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.component.Picker
 import andrewafony.testapp.designsystem.component.rememberPickerState
-import andrewafony.testapp.domain.model.Birthday
-import andrewafony.testapp.domain.model.Month
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,14 +18,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import java.time.LocalDate
+import java.time.Month
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BirthdayEditBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
-    birthday: Birthday,
-    updateBirthday: (Birthday) -> Unit,
+    birthday: LocalDate,
+    updateBirthday: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
 ) {
 
@@ -50,8 +50,8 @@ fun BirthdayEditBottomSheet(
 @Composable
 fun BirthdayEditBottomSheetContent(
     modifier: Modifier = Modifier,
-    birthday: Birthday,
-    updateBirthday: (Birthday) -> Unit,
+    birthday: LocalDate,
+    updateBirthday: (LocalDate) -> Unit,
 ) {
 
     val days = remember { (1..31).map { it.toString() } }
@@ -59,23 +59,23 @@ fun BirthdayEditBottomSheetContent(
 
     val months: List<Month> = remember {
         listOf(
-            Month("Январь", "01"),
-            Month("Февраль", "02"),
-            Month("Март", "03"),
-            Month("Апрель", "04"),
-            Month("Май", "05"),
-            Month("Июнь", "06"),
-            Month("Июль", "07"),
-            Month("Август", "08"),
-            Month("Сентябрь", "09"),
-            Month("Октябрь", "10"),
-            Month("Ноябрь", "11"),
-            Month("Декабрь", "12"),
+            Month.JANUARY,
+            Month.FEBRUARY,
+            Month.MARCH,
+            Month.APRIL,
+            Month.MAY,
+            Month.JUNE,
+            Month.JULY,
+            Month.AUGUST,
+            Month.SEPTEMBER,
+            Month.OCTOBER,
+            Month.NOVEMBER,
+            Month.DECEMBER,
         )
     }
     val monthState = rememberPickerState()
 
-    val years = remember { (1900..2024).map { it.toString() } }
+    val years = remember { (1901..2024).map { it.toString() } }
     val yearsState = rememberPickerState()
 
     Column(
@@ -94,7 +94,7 @@ fun BirthdayEditBottomSheetContent(
                     .weight(1f),
                 items = days,
                 visibleItemsCount = 5,
-                startIndex = days.indexOf(birthday.day)
+                startIndex = days.indexOfLast { it == birthday.dayOfMonth.toString() }
             )
             Picker(
                 state = monthState,
@@ -102,7 +102,7 @@ fun BirthdayEditBottomSheetContent(
                     .weight(2f),
                 items = months.map { it.name },
                 visibleItemsCount = 5,
-                startIndex = months.indexOf(birthday.month)
+                startIndex = months.indexOfLast { it.value == birthday.monthValue }
             )
             Picker(
                 state = yearsState,
@@ -110,17 +110,17 @@ fun BirthdayEditBottomSheetContent(
                     .weight(1f),
                 items = years,
                 visibleItemsCount = 5,
-                startIndex = years.indexOf(birthday.year)
+                startIndex = years.indexOfLast { it == birthday.year.toString() }
             )
         }
 
         Button(
             onClick = {
                 updateBirthday(
-                    Birthday(
-                        yearsState.selectedItem,
-                        months[months.indexOfFirst { it.name == monthState.selectedItem }],
-                        daysState.selectedItem
+                    LocalDate.of(
+                        yearsState.selectedItem.toInt(),
+                        Month.of(months.indexOfLast { it.name == monthState.selectedItem } + 1),
+                        daysState.selectedItem.toInt()
                     )
                 )
             }
@@ -137,7 +137,7 @@ private fun BirthdayEditBottomSheetPrev() {
     andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
         Surface {
             BirthdayEditBottomSheetContent(
-                birthday = Birthday("2001", Month("Май", "05"), "24"),
+                birthday = LocalDate.now(),
                 updateBirthday = {}
             )
         }
