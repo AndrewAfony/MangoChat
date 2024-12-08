@@ -1,12 +1,14 @@
 package andrewafony.testapp.chat
 
 import andrewafony.testapp.domain.model.ChatMessage
+import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +51,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.util.UUID
 
@@ -81,6 +86,11 @@ fun ChatScreenContent(
     navigateBack: () -> Unit,
 ) {
 
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(messages.size) {
+        listState.animateScrollToItem(0)
+    }
 
     Column(
         modifier = modifier
@@ -94,13 +104,14 @@ fun ChatScreenContent(
             navigateBack = navigateBack
         )
         LazyColumn(
+            state = listState,
+            reverseLayout = true,
             modifier = Modifier
                 .weight(1f)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
-            // TODO При добавлении сообщения, последнее сообщение не видно (нужно прокручивать список)
             items(messages, key = { it.id }) { item ->
                 Message(
                     modifier = Modifier
@@ -117,38 +128,11 @@ fun ChatScreenContent(
                     isUserMe = user == item.user
                 )
             }
-
-//            itemsIndexed(messages, key = { _, item -> item.id }) { index, item ->
-//                if (index != 0 && messages[index].user != messages[index - 1].user) {
-//                    Message(
-//                        modifier = Modifier
-//                            .padding(top = 24.dp)
-//                            .animateItem(),
-//                        message = item.message,
-//                        isUserMe = user == item.user
-//                    )
-//                } else {
-//                    Message(
-//                        message = item.message,
-//                        isUserMe = user == item.user
-//                    )
-//                }
-//            }
-//            item {
-//                Text(
-//                    text = "Today",
-//                    color = Color.Gray,
-//                    style = MaterialTheme.typography.labelLarge,
-//                    modifier = Modifier
-//                        .padding(vertical = 12.dp)
-//                )
-//            }
         }
         ChatScreenBottomBar(
             onPlusClick = addItem
         )
     }
-
 }
 
 @Composable

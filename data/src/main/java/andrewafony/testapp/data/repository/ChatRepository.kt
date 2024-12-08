@@ -14,6 +14,7 @@ class ChatRepositoryImpl: ChatRepository {
 
     override suspend fun newMessage(text: String) {
         messages.add(
+            0,
             ChatMessage(
                 id = ++uniqueId,
                 message = text,
