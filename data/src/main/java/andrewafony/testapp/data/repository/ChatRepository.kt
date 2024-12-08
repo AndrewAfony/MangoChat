@@ -23,4 +23,8 @@ class ChatRepositoryImpl: ChatRepository {
             )
         )
     }
+
+    override suspend fun clear() {
+        messages.clear()
+    }
 }

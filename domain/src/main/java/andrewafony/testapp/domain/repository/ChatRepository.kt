@@ -7,4 +7,6 @@ interface ChatRepository {
     fun messages() : SnapshotStateList<ChatMessage>
 
     suspend fun newMessage(text: String)
+
+    suspend fun clear()
 }

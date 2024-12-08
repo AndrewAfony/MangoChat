@@ -8,6 +8,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -65,8 +74,11 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         AnimatedVisibility(
                             visible = currentRoute == "home" || currentRoute == "settings",
-                            enter = Animation.slideInWithScaleAndFade,
-                            exit = Animation.slideOutWithScaleAndFade
+                            enter = slideInVertically(animationSpec = tween(500), initialOffsetY = { it }),
+                            exit = if (currentRoute == "chat") {
+                                slideOutHorizontally(animationSpec = tween(500), targetOffsetX = { -it } )
+                            } else
+                                slideOutVertically(animationSpec = tween(300), targetOffsetY = { it } )
                         ) { // TODO bug animation on app start
                             BottomNavigation(
                                 currentRoute = currentRoute ?: "",
