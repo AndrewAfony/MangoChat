@@ -2,8 +2,8 @@ package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.component.Picker
 import andrewafony.testapp.designsystem.component.rememberPickerState
-import andrewafony.testapp.profile.Birthday
-import andrewafony.testapp.profile.Month
+import andrewafony.testapp.domain.model.Birthday
+import andrewafony.testapp.domain.model.Month
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

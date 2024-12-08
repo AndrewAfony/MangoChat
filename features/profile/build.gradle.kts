@@ -11,6 +11,7 @@ android {
 dependencies {
 
     implementation(projects.core.designsystem)
+    implementation(projects.domain)
     api(projects.features.profileApi)
 
     implementation(platform(libs.androidx.compose.bom))

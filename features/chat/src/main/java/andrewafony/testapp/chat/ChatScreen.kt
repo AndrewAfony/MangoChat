@@ -1,13 +1,14 @@
 package andrewafony.testapp.chat
 
 import andrewafony.testapp.domain.model.ChatMessage
-import android.util.Log
+import andrewafony.testapp.domain.model.User
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,8 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,31 +43,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
-
-@Composable
-fun ComposableLifecycle(
-    lifeCycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    onEvent: (LifecycleOwner, Lifecycle.Event) -> Unit
-) {
-    DisposableEffect(lifeCycleOwner) {
-        val observer = LifecycleEventObserver { source, event ->
-            onEvent(source, event)
-        }
-        lifeCycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifeCycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-}
 
 @Composable
 fun ChatScreen(
@@ -74,20 +58,14 @@ fun ChatScreen(
     navigateBack: () -> Unit,
 ) {
 
-    val messages = viewModel.messages
-
-    LaunchedEffect(Unit) { viewModel.init() }
-
-    ComposableLifecycle { source, event ->
-
-    }
+    val messagesState by viewModel.messages.collectAsStateWithLifecycle()
+    val user by viewModel.user.collectAsStateWithLifecycle()
 
     ChatScreenContent(
         modifier = modifier,
-        user = "User",
-        image = "",
-        messages = messages,
-        addItem = viewModel::addItem,
+        messagesState = messagesState,
+        addItem = viewModel::sendMessage,
+        user = user,
         navigateBack = navigateBack
     )
 }
@@ -95,18 +73,11 @@ fun ChatScreen(
 @Composable
 fun ChatScreenContent(
     modifier: Modifier = Modifier,
-    messages: List<ChatMessage>,
-    user: String,
-    image: String,
+    messagesState: MessagesState,
+    user: User,
     addItem: () -> Unit,
     navigateBack: () -> Unit,
 ) {
-
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(messages.size) {
-        listState.animateScrollToItem(0)
-    }
 
     Column(
         modifier = modifier
@@ -114,37 +85,15 @@ fun ChatScreenContent(
             .background(MaterialTheme.colorScheme.surface)
     ) {
         ChatScreenTopBar(
-            image = image,
-            name = user,
-            status = "Online",
+            user = user,
             navigateBack = navigateBack
         )
-        LazyColumn(
-            state = listState,
-            reverseLayout = true,
+        ChatMessages(
             modifier = Modifier
-                .weight(1f)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            items(messages, key = { it.id }) { item ->
-                Message(
-                    modifier = Modifier
-                        .animateItem(
-                            fadeInSpec = tween(durationMillis = 250),
-                            fadeOutSpec = tween(durationMillis = 100),
-                            placementSpec = spring(
-                                stiffness = Spring.StiffnessLow,
-                                dampingRatio = Spring.DampingRatioLowBouncy
-                            )
-                        )
-                        .padding(top = 24.dp),
-                    message = item.message,
-                    isUserMe = user == item.user
-                )
-            }
-        }
+                .weight(1f),
+            state = messagesState,
+            userName = user.name
+        )
         ChatScreenBottomBar(
             onPlusClick = addItem
         )
@@ -154,11 +103,10 @@ fun ChatScreenContent(
 @Composable
 fun ChatScreenTopBar(
     modifier: Modifier = Modifier,
-    image: String,
-    name: String,
-    status: String,
+    user: User,
     navigateBack: () -> Unit,
 ) {
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -180,7 +128,7 @@ fun ChatScreenTopBar(
                 .padding(12.dp)
         )
         AsyncImage(
-            model = image,
+            model = user.image,
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -192,14 +140,14 @@ fun ChatScreenTopBar(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = name,
+                text = user.name,
                 style = MaterialTheme.typography.bodyLarge,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
             Spacer(modifier = Modifier.size(4.dp))
             Text(
-                text = status,
+                text = user.status,
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 overflow = TextOverflow.Ellipsis,
@@ -223,7 +171,62 @@ fun ChatScreenTopBar(
                 .clickable { }
                 .padding(12.dp)
         )
+    }
+}
 
+@Composable
+fun ChatMessages(
+    modifier: Modifier = Modifier,
+    userName: String,
+    state: MessagesState,
+) {
+
+    val listState = rememberLazyListState()
+
+    when (state) {
+        is MessagesState.Loading -> {
+            Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is MessagesState.Success -> {
+
+            LaunchedEffect(state.messages.size) {
+                listState.animateScrollToItem(0)
+            }
+
+            if (state.messages.isEmpty()) {
+                Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text(text = "Сообщений пока нет...", fontStyle = FontStyle.Italic, color = Color.Gray)
+                }
+            } else {
+                LazyColumn(
+                    modifier = modifier
+                        .padding(16.dp),
+                    state = listState,
+                    reverseLayout = true,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    items(state.messages, key = { it.id }) { item ->
+                        Message(
+                            modifier = Modifier
+                                .animateItem(
+                                    fadeInSpec = tween(durationMillis = 250),
+                                    fadeOutSpec = tween(durationMillis = 100),
+                                    placementSpec = spring(
+                                        stiffness = Spring.StiffnessLow,
+                                        dampingRatio = Spring.DampingRatioLowBouncy
+                                    )
+                                )
+                                .padding(top = 24.dp),
+                            message = item.message,
+                            isUserMe = userName == item.user
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -287,40 +290,25 @@ private fun ChatScreenPrev() {
     andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
         Surface(color = Color.White) {
             ChatScreenContent(
-                user = "Andrew Afanasiev",
-                image = "",
-                messages = listOf(
-                    ChatMessage(
-                        message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
-                        user = "Andrew Afanasiev",
-                        timestamp = "",
-                        id = 1
-                    ),
-                    ChatMessage(
-                        message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
-                        user = "User",
-                        timestamp = "",
-                        id = 2
-                    ),
-                    ChatMessage(
-                        message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
-                        user = "User",
-                        timestamp = "",
-                        id = 3
-                    ),
-                    ChatMessage(
-                        message = "dskfmg dfkgm dfsmg; dmfg skfdmg",
-                        user = "Andrew Afanasiev",
-                        timestamp = "",
-                        id = 4
-                    ),
-                    ChatMessage(
-                        message = "Test 1",
-                        user = "Andrew Afanasiev",
-                        timestamp = "",
-                        id = 5
-                    )
+                messagesState = MessagesState.Success(
+                    messages = listOf(ChatMessage(id = 1, message = "Message content", user = "user", timestamp = "")),
                 ),
+                user = User.empty(),
+                navigateBack = {},
+                addItem = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ChatScreenPrevEmptyList() {
+    andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
+        Surface(color = Color.White) {
+            ChatScreenContent(
+                messagesState = MessagesState.Success(messages = emptyList()),
+                user = User.empty(),
                 navigateBack = {},
                 addItem = {}
             )

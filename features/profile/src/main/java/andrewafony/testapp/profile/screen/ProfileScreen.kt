@@ -1,9 +1,9 @@
 package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.toast
-import andrewafony.testapp.profile.Birthday
+import andrewafony.testapp.domain.model.Birthday
+import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.profile.ProfileViewModel
-import andrewafony.testapp.profile.User
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
 import andrewafony.testapp.profile.screen.components.ProfileItem
 import android.net.Uri
@@ -100,10 +100,6 @@ fun ProfileScreenContent(
     navigateToCityEdit: () -> Unit,
     navigateBack: () -> Unit,
 ) {
-
-    SideEffect {
-        Log.d("MyHelper", "user: ${user.name} ")
-    }
 
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current

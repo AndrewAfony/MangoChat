@@ -12,4 +12,6 @@ dependencies {
 
     implementation(projects.core.designsystem)
 
+    // ==== Koin ====
+    implementation (libs.koin.androidx.compose)
 }
