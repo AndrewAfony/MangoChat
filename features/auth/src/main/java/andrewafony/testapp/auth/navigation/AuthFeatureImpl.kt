@@ -16,7 +16,7 @@ class AuthFeatureImpl(
     private val homeFeature: HomeFeatureApi
 ): AuthFeatureApi {
 
-    override val route: String = registrationRoute
+    override val route: String = authRoute
 
     override fun registerGraph(
         navGraphBuilder: NavGraphBuilder,

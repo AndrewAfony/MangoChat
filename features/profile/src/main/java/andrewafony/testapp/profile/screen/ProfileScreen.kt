@@ -112,7 +112,9 @@ fun ProfileScreenContent(
     var editImageButtonOffset = remember { Offset(0f, 0f) }
 
     val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
             updateImage(uri)
         }
 
@@ -229,7 +231,6 @@ fun ProfileScreenContent(
                 }
             )
         }
-
     }
 }
 
@@ -290,7 +291,7 @@ fun ProfileScreenItems(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Дата рождения",
-            content = "${birthday.dayOfMonth}.${birthday.month.name}.${birthday.year}",
+            content = "${birthday.dayOfMonth}.${birthday.monthValue}.${birthday.year}",
             isChangeable = true,
             onClick = onBirthdayChange
         )

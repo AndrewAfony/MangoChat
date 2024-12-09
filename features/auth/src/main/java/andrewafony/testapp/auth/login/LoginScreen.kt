@@ -6,7 +6,7 @@ import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
 import android.view.WindowManager
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateIntOffset
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
@@ -22,11 +22,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -45,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.joelkanyi.jcomposecountrycodepicker.component.KomposeCountryCodePicker
 import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryCodePickerState
@@ -82,18 +81,18 @@ fun LoginScreenContent(
     val width = LocalConfiguration.current.screenWidthDp
     val transition = updateTransition(targetState = isCode)
 
-    val firstOffset by transition.animateDp(
+    val firstOffset by transition.animateIntOffset(
         transitionSpec = { tween(durationMillis = 700) },
         label = "one"
     ) { isVisible ->
-        if (!isVisible) 0.dp else -width.dp
+        IntOffset(if (!isVisible) 0 else -width*3, 0)
     }
 
-    val secondOffset by transition.animateDp(
+    val secondOffset by transition.animateIntOffset(
         transitionSpec = { tween(durationMillis = 700) },
-        label = "two"
+        label = "three"
     ) { isVisible ->
-        if (!isVisible) width.dp else 0.dp
+        IntOffset(if (!isVisible) width*3 else 0, 0)
     }
 
     Column(
@@ -113,7 +112,7 @@ fun LoginScreenContent(
 
             KomposeCountryCodePicker(
                 modifier = Modifier
-                    .offset(firstOffset)
+                    .offset { firstOffset }
                     .fillMaxWidth(0.9f)
                     .padding(vertical = 32.dp),
                 text = phoneNumber.value,
@@ -130,7 +129,7 @@ fun LoginScreenContent(
 
             OtpTextField(
                 modifier = Modifier
-                    .offset(secondOffset)
+                    .offset { secondOffset }
                     .padding(vertical = 32.dp),
                 otpText = code,
                 onOtpTextChange = { value, _ ->
