@@ -1,4 +1,4 @@
-package andrewafony.testapp.data.remote.model
+package andrewafony.testapp.data.remote.model.response
 
 import andrewafony.testapp.domain.model.User
 import kotlinx.serialization.Serializable

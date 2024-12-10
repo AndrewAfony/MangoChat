@@ -1,21 +1,26 @@
 package andrewafony.testapp.data.remote.service
 
-import andrewafony.testapp.data.remote.model.CheckAuthCodeResponse
+import andrewafony.testapp.data.remote.model.request.Auth
+import andrewafony.testapp.data.remote.model.request.AuthCode
+import andrewafony.testapp.data.remote.model.request.Registration
+import andrewafony.testapp.data.remote.model.response.CheckAuthCodeResponse
+import andrewafony.testapp.data.remote.model.response.SendAuthCodeResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthService {
 
     @POST("api/v1/users/send-auth-code/")
-    fun auth(phone: String): Boolean
+    suspend fun auth(@Body auth: Auth): Response<SendAuthCodeResponse>
 
     @POST("api/v1/users/check-auth-code/")
-    fun checkAuthCode(phone: String, code: String): CheckAuthCodeResponse
+    suspend fun checkAuthCode(@Body authCode: AuthCode): CheckAuthCodeResponse
 
     @POST("api/v1/users/register/")
-    fun register(phone: String, name: String, username: String): CheckAuthCodeResponse
+    suspend fun register(@Body registration: Registration): CheckAuthCodeResponse
 
     @POST("api/v1/users/refresh-token/")
-    fun refreshToken(@Header("Authorization") token: String): Response<CheckAuthCodeResponse>
+    suspend fun refreshToken(@Header("Authorization") token: String): Response<CheckAuthCodeResponse>
 }

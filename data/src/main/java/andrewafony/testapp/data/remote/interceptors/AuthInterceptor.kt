@@ -10,7 +10,7 @@ class AuthInterceptor (
     private val tokenManager: TokenManager,
 ): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = runBlocking { tokenManager.token.first() }
+        val token = runBlocking { tokenManager.accessToken.first() }
         val request = chain.request().newBuilder()
         request.addHeader("Authorization", "Bearer $token")
         return chain.proceed(request.build())
