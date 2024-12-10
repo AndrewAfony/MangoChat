@@ -4,6 +4,7 @@ import andrewafony.testapp.designsystem.SetWindowSoftInputMode
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
+import andrewafony.testapp.designsystem.toast
 import android.view.WindowManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntOffset
@@ -31,33 +32,45 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joelkanyi.jcomposecountrycodepicker.component.KomposeCountryCodePicker
 import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryCodePickerState
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    navigateToHome: () -> Unit
+    viewModel: AuthViewModel = koinViewModel(),
+    navigateToRegistration: (String) -> Unit,
+    navigateToHome: () -> Unit,
 ) {
+
+    val authState by viewModel.authState.collectAsStateWithLifecycle()
+    val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
 
     SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
     LoginScreenContent(
         modifier = modifier,
+        authState = authState,
+        authUiState = authUiState,
+        updateUiState = viewModel::updateUiState,
+        handleButton = viewModel::handleButton,
+        backToPhone = viewModel::backToPhone,
+        clearState = viewModel::clear,
+        navigateToRegistration = navigateToRegistration,
         navigateToHome = navigateToHome
     )
 }
@@ -65,34 +78,52 @@ fun LoginScreen(
 @Composable
 fun LoginScreenContent(
     modifier: Modifier = Modifier,
-    navigateToHome: () -> Unit
+    authState: AuthState,
+    authUiState: AuthUiState,
+    updateUiState: (UiEvent) -> Unit,
+    handleButton: (String) -> Unit,
+    backToPhone: () -> Unit,
+    clearState: () -> Unit,
+    navigateToRegistration: (String) -> Unit,
+    navigateToHome: () -> Unit,
 ) {
 
-    val locale = Locale.current
+    val context = LocalContext.current
 
-    val phoneNumber = rememberSaveable { mutableStateOf("") }
-    val state = rememberKomposeCountryCodePickerState(
+    val locale = Locale.current
+    val phoneState = rememberKomposeCountryCodePickerState(
         defaultCountryCode = locale.region
     )
 
-    var isCode by remember { mutableStateOf(false) }
-    var code by rememberSaveable { mutableStateOf("") }
-
     val width = LocalConfiguration.current.screenWidthDp
-    val transition = updateTransition(targetState = isCode)
+    val transition = updateTransition(targetState = authUiState.isCode)
 
     val firstOffset by transition.animateIntOffset(
         transitionSpec = { tween(durationMillis = 700) },
         label = "one"
     ) { isVisible ->
-        IntOffset(if (!isVisible) 0 else -width*3, 0)
+        IntOffset(if (!isVisible) 0 else -width * 3, 0)
     }
 
     val secondOffset by transition.animateIntOffset(
         transitionSpec = { tween(durationMillis = 700) },
-        label = "three"
+        label = "two"
     ) { isVisible ->
-        IntOffset(if (!isVisible) width*3 else 0, 0)
+        IntOffset(if (!isVisible) width * 3 else 0, 0)
+    }
+
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Error) {
+            context.toast("Error: ${authState.message}")
+        }
+
+        if (authState is AuthState.Registration) {
+            navigateToRegistration(phoneState.getFullyFormattedPhoneNumber())
+            clearState()
+        }
+        if (authState is AuthState.SignIn) {
+            navigateToHome()
+        }
     }
 
     Column(
@@ -115,8 +146,8 @@ fun LoginScreenContent(
                     .offset { firstOffset }
                     .fillMaxWidth(0.9f)
                     .padding(vertical = 32.dp),
-                text = phoneNumber.value,
-                onValueChange = { phoneNumber.value = it },
+                text = authUiState.phone,
+                onValueChange = { updateUiState(UiEvent.Phone(it)) },
                 placeholder = { Text(text = "Номер телефона") },
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.colors(
@@ -124,17 +155,15 @@ fun LoginScreenContent(
                     focusedContainerColor = veryLightGray,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
-                state = state,
+                state = phoneState,
             )
 
             OtpTextField(
                 modifier = Modifier
                     .offset { secondOffset }
                     .padding(vertical = 32.dp),
-                otpText = code,
-                onOtpTextChange = { value, _ ->
-                    code = value
-                }
+                otpText = authUiState.code,
+                onOtpTextChange = { value, _ -> updateUiState(UiEvent.Code(value)) }
             )
         }
 
@@ -145,7 +174,7 @@ fun LoginScreenContent(
         ) {
             AnimatedVisibility(
                 modifier = Modifier,
-                visible = isCode
+                visible = authState is AuthState.EnterCode
             ) {
                 Box(
                     modifier = Modifier
@@ -154,11 +183,11 @@ fun LoginScreenContent(
                         .padding(end = 12.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .border(
-                            1.dp,
+                            width = 1.dp,
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(16.dp)
                         )
-                        .clickable { isCode = !isCode },
+                        .clickable { backToPhone() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Default.KeyboardArrowLeft, null)
@@ -168,9 +197,10 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxWidth(0.9f),
                 text = "Войти",
-                isLoader = isCode,
+                isEnabled = phoneState.isPhoneNumberValid(),
+                isLoader = authState is AuthState.Loading,
                 animatedContentAlignment = Alignment.CenterEnd,
-                onClick = { isCode = !isCode }
+                onClick = { if (authState !is AuthState.Loading) handleButton(phoneState.getFullPhoneNumber()) }
             )
         }
     }
@@ -182,6 +212,13 @@ private fun LogScreenPrev() {
     MangoTestChatTheme {
         Surface {
             LoginScreenContent(
+                authUiState = AuthUiState("", "", false),
+                authState = AuthState.SignedOut,
+                updateUiState = {},
+                handleButton = {},
+                backToPhone = {},
+                clearState = {},
+                navigateToRegistration = {},
                 navigateToHome = {},
             )
         }

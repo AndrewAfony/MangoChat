@@ -1,6 +1,7 @@
 package andrewafony.testapp.designsystem.component
 
 import andrewafony.testapp.designsystem.theme.veryLightGray
+import android.telephony.PhoneNumberUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -24,9 +26,11 @@ fun MangoTextField(
     modifier: Modifier = Modifier,
     field: String,
     placeholder: String,
+    leadingIcon: (@Composable () -> Unit)? = null,
     isError: Boolean = false,
     isEnabled: Boolean = true,
     isSingleLine: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardCapitalization: KeyboardCapitalization = KeyboardCapitalization.None,
     keyboardType: KeyboardType = KeyboardType.Unspecified,
     onEdit: (String) -> Unit,
@@ -41,8 +45,10 @@ fun MangoTextField(
         placeholder = {
             Text(text = placeholder)
         },
+        leadingIcon = leadingIcon,
         singleLine = isSingleLine,
         isError = isError,
+        visualTransformation = visualTransformation,
         shape = RoundedCornerShape(16.dp),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = Color.Transparent,

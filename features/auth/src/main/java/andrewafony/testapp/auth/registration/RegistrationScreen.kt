@@ -3,6 +3,8 @@ package andrewafony.testapp.auth.registration
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import andrewafony.testapp.designsystem.toast
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,20 +32,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
+    number: String,
+    viewModel: RegistrationViewModel = koinViewModel(),
     navigateBack: () -> Unit,
     navigateToHome: () -> Unit,
 ) {
 
+    val regState by viewModel.regState.collectAsStateWithLifecycle()
+
     RegistrationScreenContent(
         modifier = modifier,
+        number = number,
+        regState = regState,
+        register = { viewModel.register(phone = number) },
+        updateUiState = viewModel::updateUiState,
         navigateBack = navigateBack,
         navigateToHome = navigateToHome
     )
@@ -51,16 +65,27 @@ fun RegistrationScreen(
 @Composable
 fun RegistrationScreenContent(
     modifier: Modifier = Modifier,
+    number: String,
+    regState: RegState,
+    register: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateBack: () -> Unit
+    updateUiState: (UiEvent) -> Unit,
+    navigateBack: () -> Unit,
 ) {
 
+    val context = LocalContext.current
+
     val allowedCharsRegex = remember { Regex("^[A-Za-z0-9\\-_]*$") }
-
-    var name by rememberSaveable { mutableStateOf("") }
-
-    var username by rememberSaveable { mutableStateOf("") }
     var isUsernameError by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(regState.isError, regState.isSuccess) {
+        if (regState.isError) {
+            context.toast("Something went wrong")
+        }
+        if (regState.isSuccess) {
+            navigateToHome()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -76,7 +101,7 @@ fun RegistrationScreenContent(
         MangoTextField(
             modifier = Modifier
                 .padding(top = 32.dp),
-            field = "+7 (952) 773-56-92",
+            field = number,
             isEnabled = false,
             placeholder = "Номер телефона",
             onEdit = {}
@@ -84,20 +109,20 @@ fun RegistrationScreenContent(
         MangoTextField(
             modifier = Modifier
                 .padding(vertical = 12.dp),
-            field = name,
+            field = regState.name,
             isSingleLine = true,
             placeholder = "Имя пользователя",
             keyboardCapitalization = KeyboardCapitalization.Words,
-            onEdit = { name = it }
+            onEdit = { updateUiState(UiEvent.Name(it)) }
         )
         MangoTextField(
-            field = username,
+            field = regState.username,
             placeholder = "Username",
             isError = isUsernameError,
             isSingleLine = true,
             keyboardType = KeyboardType.Ascii,
             onEdit = {
-                username = it
+                updateUiState(UiEvent.Username(it))
                 isUsernameError = !it.matches(allowedCharsRegex)
             }
         )
@@ -117,8 +142,11 @@ fun RegistrationScreenContent(
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, top = 12.dp),
             text = "Войти",
-            isLoader = false,
-            onClick = {}
+            isEnabled = !isUsernameError,
+            isLoader = regState.isLoading,
+            onClick = {
+                if (!regState.isLoading) register()
+            }
         )
     }
 
@@ -145,6 +173,10 @@ private fun LoginScreenPrev() {
         Surface {
             RegistrationScreenContent(
                 navigateBack = {},
+                number = "+7 9991342342",
+                regState = RegState(),
+                register = {},
+                updateUiState = {},
                 navigateToHome = {},
             )
         }
