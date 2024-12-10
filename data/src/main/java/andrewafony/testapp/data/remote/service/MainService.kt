@@ -6,8 +6,8 @@ import retrofit2.http.PUT
 interface MainService {
 
     @GET("api/v1/users/me/")
-    fun userInfo()
+    suspend fun userInfo()
 
     @PUT("api/v1/users/me")
-    fun updateUserInfo()
+    suspend fun updateUserInfo()
 }

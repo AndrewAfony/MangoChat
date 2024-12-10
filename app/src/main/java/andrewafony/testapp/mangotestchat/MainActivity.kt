@@ -1,6 +1,5 @@
 package andrewafony.testapp.mangotestchat
 
-import andrewafony.testapp.designsystem.animation.Animation
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.home_api.HomeFeatureApi
 import andrewafony.testapp.settings_api.SettingsFeatureApi
@@ -8,12 +7,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
@@ -79,7 +73,7 @@ class MainActivity : ComponentActivity() {
                                 slideOutHorizontally(animationSpec = tween(500), targetOffsetX = { -it } )
                             } else
                                 slideOutVertically(animationSpec = tween(300), targetOffsetY = { it } )
-                        ) { // TODO bug animation on app start
+                        ) {
                             BottomNavigation(
                                 currentRoute = currentRoute ?: "",
                                 navigateToHome = {
@@ -116,8 +110,6 @@ fun BottomNavigation(
     navigateToHome: () -> Unit,
     navigateToSettings: () -> Unit,
 ) {
-
-    // TODO check click through
 
     NavigationBar(
         modifier = modifier

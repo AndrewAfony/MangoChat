@@ -207,6 +207,7 @@ fun ProfileScreenContent(
             name = "${user.name} ${user.surname}",
             birthday = user.birthday,
             city = user.city,
+            zodiac = user.zodiac,
             onNameChange = navigateToNameEdit,
             onCityChange = navigateToCityEdit,
             onBirthdayChange = { isBirthdayBottomSheet = true }
@@ -262,6 +263,7 @@ fun ProfileScreenItems(
     name: String,
     city: String,
     birthday: LocalDate,
+    zodiac: String,
     onNameChange: () -> Unit,
     onCityChange: () -> Unit,
     onBirthdayChange: () -> Unit,
@@ -298,7 +300,7 @@ fun ProfileScreenItems(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Знак зодиака",
-            content = "Близнецы",
+            content = zodiac,
             isChangeable = false
         )
     }

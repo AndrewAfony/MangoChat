@@ -12,15 +12,24 @@ import kotlinx.coroutines.flow.map
 class TokenManager(private val context: Context) {
 
     companion object {
-        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userToken")
-        private val USER_TOKEN_KEY = stringPreferencesKey("user_token")
+        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("tokenManager")
+        private val USER_TOKEN_KEY = stringPreferencesKey("access_token")
+        private val USER_REFRESH_KEY = stringPreferencesKey("refresh_token")
     }
 
-    val token: Flow<String> = context.dataStore.data.map { preferences -> preferences[USER_TOKEN_KEY] ?: "" }
+    val accessToken: Flow<String> =
+        context.dataStore.data.map { preferences -> preferences[USER_TOKEN_KEY] ?: "" }
 
-    suspend fun saveToken(token: String) {
+    val refreshToken: Flow<String> =
+        context.dataStore.data.map { preferences -> preferences[USER_REFRESH_KEY] ?: "" }
+
+    suspend fun saveToken(token: Token) {
         context.dataStore.edit { preferences ->
-            preferences[USER_TOKEN_KEY] = token
+            if (token is Token.Access) {
+                preferences[USER_TOKEN_KEY] = token.token
+            } else {
+                preferences[USER_REFRESH_KEY] = token.token
+            }
         }
     }
 
@@ -29,4 +38,11 @@ class TokenManager(private val context: Context) {
             preferences.remove(USER_TOKEN_KEY)
         }
     }
+}
+
+sealed class Token(val token: String) {
+
+    class Refresh(token: String) : Token(token)
+
+    class Access(token: String) : Token(token)
 }
