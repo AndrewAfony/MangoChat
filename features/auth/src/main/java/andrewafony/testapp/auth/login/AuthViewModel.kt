@@ -32,7 +32,7 @@ class AuthViewModel(
                     _authState.value =
                         when (result) {
                             is Result.Success -> {
-                                if (result.data.isUserExists) AuthState.SignIn else AuthState.Registration
+                                if (result.data) AuthState.SignIn else AuthState.Registration
                             }
 
                             is Result.Error -> AuthState.Error(result.message)
