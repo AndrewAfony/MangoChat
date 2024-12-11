@@ -34,12 +34,16 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -95,6 +99,9 @@ fun LoginScreenContent(
 
     val context = LocalContext.current
 
+    val focusManager = LocalFocusManager.current
+    val codeFocusRequester = remember { FocusRequester() }
+
     val locale = Locale.current
     val phoneState = rememberKomposeCountryCodePickerState(
         defaultCountryCode = locale.region
@@ -118,9 +125,9 @@ fun LoginScreenContent(
     }
 
     LaunchedEffect(Unit) {
-       isError.collectLatest {
-           context.toast("Error")
-       }
+        isError.collectLatest {
+            context.toast("Error")
+        }
     }
 
     LaunchedEffect(authState) {
@@ -131,6 +138,10 @@ fun LoginScreenContent(
         }
         if (authState is AuthState.SignIn) {
             navigateToHome()
+        }
+
+        if (authState is AuthState.EnterCode) {
+            codeFocusRequester.requestFocus()
         }
     }
 
@@ -168,6 +179,7 @@ fun LoginScreenContent(
 
             OtpTextField(
                 modifier = Modifier
+                    .focusRequester(codeFocusRequester)
                     .offset { secondOffset }
                     .padding(vertical = 32.dp),
                 otpText = authUiState.code,
@@ -195,7 +207,10 @@ fun LoginScreenContent(
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(16.dp)
                         )
-                        .clickable { backToPhone() },
+                        .clickable {
+                            focusManager.clearFocus()
+                            backToPhone()
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Default.KeyboardArrowLeft, null)
@@ -205,7 +220,7 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxWidth(0.9f),
                 text = "Войти",
-                isEnabled = when(authState) {
+                isEnabled = when (authState) {
                     is AuthState.SignedOut -> phoneState.isPhoneNumberValid()
                     is AuthState.EnterCode -> authUiState.isCodeValid
                     else -> true
