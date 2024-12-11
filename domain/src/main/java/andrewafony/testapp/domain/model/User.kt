@@ -1,15 +1,16 @@
 package andrewafony.testapp.domain.model
 
+import android.net.Uri
 import java.time.LocalDate
 
 data class User(
     val name: String,
     val surname: String,
     val username: String,
-    val image: String,
+    val image: Uri,
     val phone: String,
     val status: String,
-    val birthday: LocalDate,
+    val birthday: LocalDate?,
     val city: String,
     val zodiac: String,
     val about: String,
@@ -20,7 +21,7 @@ data class User(
             name = "Andrew",
             surname = "Afanasiev",
             username = "@andrew_afony",
-            image = "",
+            image = Uri.EMPTY,
             status = "Online",
             phone = "+7 (952) 773-56-92",
             birthday = LocalDate.now(),
@@ -51,4 +52,4 @@ fun LocalDate.isBetween(first: LocalDate, second: LocalDate): Boolean {
     return isAfter(first) && isBefore(second)
 }
 
-fun date(year: Int, day: Int, month: Int) = LocalDate.of(year, month, day)
+fun date(year: Int, day: Int, month: Int): LocalDate = LocalDate.of(year, month, day)

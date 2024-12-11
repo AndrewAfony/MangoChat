@@ -26,7 +26,7 @@ import java.time.Month
 fun BirthdayEditBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
-    birthday: LocalDate,
+    birthday: LocalDate?,
     updateBirthday: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -50,7 +50,7 @@ fun BirthdayEditBottomSheet(
 @Composable
 fun BirthdayEditBottomSheetContent(
     modifier: Modifier = Modifier,
-    birthday: LocalDate,
+    birthday: LocalDate?,
     updateBirthday: (LocalDate) -> Unit,
 ) {
 
@@ -94,7 +94,7 @@ fun BirthdayEditBottomSheetContent(
                     .weight(1f),
                 items = days,
                 visibleItemsCount = 5,
-                startIndex = days.indexOfLast { it == birthday.dayOfMonth.toString() }
+                startIndex = days.indexOfLast { it == birthday?.dayOfMonth.toString() }
             )
             Picker(
                 state = monthState,
@@ -102,7 +102,7 @@ fun BirthdayEditBottomSheetContent(
                     .weight(2f),
                 items = months.map { it.name },
                 visibleItemsCount = 5,
-                startIndex = months.indexOfLast { it.value == birthday.monthValue }
+                startIndex = months.indexOfLast { it.value == birthday?.monthValue }
             )
             Picker(
                 state = yearsState,
@@ -110,7 +110,7 @@ fun BirthdayEditBottomSheetContent(
                     .weight(1f),
                 items = years,
                 visibleItemsCount = 5,
-                startIndex = years.indexOfLast { it == birthday.year.toString() }
+                startIndex = years.indexOfLast { it == birthday?.year.toString() }
             )
         }
 

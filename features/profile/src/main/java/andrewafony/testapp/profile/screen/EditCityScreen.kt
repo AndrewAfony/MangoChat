@@ -45,7 +45,7 @@ fun EditCityScreen(
 @Composable
 fun EditCityScreenContent(
     modifier: Modifier = Modifier,
-    city: String,
+    city: String?,
     updateCity: (String) -> Unit,
     navigateBack: () -> Unit
 ) {
@@ -69,7 +69,7 @@ fun EditCityScreenContent(
 
         MangoTextField(
             modifier = Modifier.padding(vertical = 12.dp),
-            field = currentCity,
+            field = currentCity ?: "",
             placeholder = "Город",
             onEdit = { currentCity = it }
         )
@@ -80,7 +80,7 @@ fun EditCityScreenContent(
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             onClick = {
-                updateCity(currentCity)
+                updateCity(currentCity ?: "")
                 navigateBack()
             }
         ) {

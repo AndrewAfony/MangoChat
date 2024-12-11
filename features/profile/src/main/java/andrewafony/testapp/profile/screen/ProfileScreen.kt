@@ -1,7 +1,9 @@
 package andrewafony.testapp.profile.screen
 
+import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.toast
 import andrewafony.testapp.domain.model.User
+import andrewafony.testapp.profile.ProfileState
 import andrewafony.testapp.profile.ProfileViewModel
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
 import andrewafony.testapp.profile.screen.components.ProfileItem
@@ -12,8 +14,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -25,12 +29,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +65,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,19 +77,20 @@ import java.time.LocalDate
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    profileViewModel: ProfileViewModel = koinViewModel(),
+    viewModel: ProfileViewModel = koinViewModel(),
     navigateToNameEdit: () -> Unit,
     navigateToCityEdit: () -> Unit,
     navigateBack: () -> Unit,
 ) {
 
-    val userState by profileViewModel.userState.collectAsStateWithLifecycle()
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
 
     ProfileScreenContent(
         modifier = modifier,
-        user = userState,
-        updateBirthday = profileViewModel::updateBirthday,
-        updateImage = profileViewModel::updateImage,
+        profileState = profileState,
+        updateBirthday = viewModel::updateBirthday,
+        updateImage = viewModel::updateImage,
+        retry = viewModel::retry,
         navigateToNameEdit = navigateToNameEdit,
         navigateToCityEdit = navigateToCityEdit,
         navigateBack = navigateBack
@@ -90,9 +101,10 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
-    user: User,
+    profileState: ProfileState,
     updateImage: (Uri?) -> Unit,
     updateBirthday: (LocalDate) -> Unit,
+    retry: () -> Unit,
     navigateToNameEdit: () -> Unit,
     navigateToCityEdit: () -> Unit,
     navigateBack: () -> Unit,
@@ -129,108 +141,136 @@ fun ProfileScreenContent(
 
         ProfileScreenTopBar(navigateBack = navigateBack)
 
-        AsyncImage(
-            model = user.image,
-            contentDescription = "",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .size(128.dp)
-                .graphicsLayer {
-                    compositingStrategy = CompositingStrategy.Offscreen
+        when (profileState) {
+            is ProfileState.Loading -> {
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
-                .pointerInput(Unit) {
-                    detectTapGestures { tapOffset ->
-                        if (tapOffset.x > editImageButtonOffset.x && tapOffset.y > editImageButtonOffset.y) {
-                            launcher.launch("image/*")
-                        }
+            }
+
+            is ProfileState.Error -> {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Something went wrong",
+                        color = Color.Red,
+                        fontStyle = FontStyle.Italic
+                    )
+                    Spacer(modifier = Modifier.size(12.dp))
+                    Button(onClick = retry) {
+                        Text("Повторить")
                     }
                 }
-                .drawWithCache {
-                    val dotSize = size.width / 8f
+            }
 
-                    editImageButtonOffset =
-                        Offset(size.width - dotSize * 2, size.height - dotSize * 2)
-
-                    val path = Path()
-                    path.addOval(
-                        Rect(
-                            topLeft = Offset.Zero,
-                            bottomRight = Offset(size.width, size.height)
-                        )
-                    )
-                    onDrawWithContent {
-                        clipPath(path) {
-                            this@onDrawWithContent.drawContent()
+            is ProfileState.Success -> {
+                AsyncImage(
+                    model = profileState.user.image,
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .size(128.dp)
+                        .graphicsLayer {
+                            compositingStrategy = CompositingStrategy.Offscreen
                         }
-                        drawCircle(
-                            Color.Black,
-                            radius = dotSize,
-                            center = Offset(
-                                x = size.width - dotSize,
-                                y = size.height - dotSize
-                            ),
-                            blendMode = BlendMode.Clear
-                        )
-                        drawCircle(
-                            color = primaryColor,
-                            radius = dotSize * 0.8f,
-                            center = Offset(
-                                x = size.width - dotSize,
-                                y = size.height - dotSize
-                            )
-                        )
-                        translate(
-                            left = size.width - dotSize - iconEdit.intrinsicSize.width / 2 + 4.dp.toPx(),
-                            top = size.height - dotSize - iconEdit.intrinsicSize.height / 2 + 4.dp.toPx()
-                        ) {
-                            with(iconEdit) {
-                                draw(
-                                    size = Size(16.dp.toPx(), 16.dp.toPx())
-                                )
+                        .pointerInput(Unit) {
+                            detectTapGestures { tapOffset ->
+                                if (tapOffset.x > editImageButtonOffset.x && tapOffset.y > editImageButtonOffset.y) {
+                                    launcher.launch("image/*")
+                                }
                             }
                         }
-                    }
-                }
-        )
+                        .drawWithCache {
+                            val dotSize = size.width / 8f
 
-        ProfileUnchangeableItemsGroup(
-            username = user.username,
-            phone = user.phone,
-            onClick = {
-                clipboardManager.setText(AnnotatedString(it))
-                context.toast("Copied")
-            }
-        )
+                            editImageButtonOffset =
+                                Offset(size.width - dotSize * 2, size.height - dotSize * 2)
 
-        ProfileScreenItems(
-            name = "${user.name} ${user.surname}",
-            birthday = user.birthday,
-            city = user.city,
-            zodiac = user.zodiac,
-            onNameChange = navigateToNameEdit,
-            onCityChange = navigateToCityEdit,
-            onBirthdayChange = { isBirthdayBottomSheet = true }
-        )
-
-        ProfileAboutItem(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-        )
-
-        if (isBirthdayBottomSheet) {
-            BirthdayEditBottomSheet(
-                birthday = user.birthday,
-                sheetState = birthdayBottomSheetState,
-                updateBirthday = updateBirthday,
-                onDismiss = {
-                    scope.launch { birthdayBottomSheetState.hide() }.invokeOnCompletion {
-                        if(!birthdayBottomSheetState.isVisible) {
-                            isBirthdayBottomSheet = false
+                            val path = Path()
+                            path.addOval(
+                                Rect(
+                                    topLeft = Offset.Zero,
+                                    bottomRight = Offset(size.width, size.height)
+                                )
+                            )
+                            onDrawWithContent {
+                                clipPath(path) {
+                                    this@onDrawWithContent.drawContent()
+                                }
+                                drawCircle(
+                                    Color.Black,
+                                    radius = dotSize,
+                                    center = Offset(
+                                        x = size.width - dotSize,
+                                        y = size.height - dotSize
+                                    ),
+                                    blendMode = BlendMode.Clear
+                                )
+                                drawCircle(
+                                    color = primaryColor,
+                                    radius = dotSize * 0.8f,
+                                    center = Offset(
+                                        x = size.width - dotSize,
+                                        y = size.height - dotSize
+                                    )
+                                )
+                                translate(
+                                    left = size.width - dotSize - iconEdit.intrinsicSize.width / 2 + 4.dp.toPx(),
+                                    top = size.height - dotSize - iconEdit.intrinsicSize.height / 2 + 4.dp.toPx()
+                                ) {
+                                    with(iconEdit) {
+                                        draw(
+                                            size = Size(16.dp.toPx(), 16.dp.toPx())
+                                        )
+                                    }
+                                }
+                            }
                         }
+                )
+
+                ProfileUnchangeableItemsGroup(
+                    username = profileState.user.username,
+                    phone = profileState.user.phone,
+                    onClick = {
+                        clipboardManager.setText(AnnotatedString(it))
+                        context.toast("Copied")
                     }
+                )
+
+                ProfileScreenItems(
+                    name = "${profileState.user.name} ${profileState.user.surname}",
+                    birthday = profileState.user.birthday,
+                    city = profileState.user.city,
+                    zodiac = profileState.user.zodiac,
+                    onNameChange = navigateToNameEdit,
+                    onCityChange = navigateToCityEdit,
+                    onBirthdayChange = { isBirthdayBottomSheet = true }
+                )
+
+                ProfileAboutItem(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                )
+
+                if (isBirthdayBottomSheet) {
+                    BirthdayEditBottomSheet(
+                        birthday = profileState.user.birthday,
+                        sheetState = birthdayBottomSheetState,
+                        updateBirthday = updateBirthday,
+                        onDismiss = {
+                            scope.launch { birthdayBottomSheetState.hide() }.invokeOnCompletion {
+                                if (!birthdayBottomSheetState.isVisible) {
+                                    isBirthdayBottomSheet = false
+                                }
+                            }
+                        }
+                    )
                 }
-            )
+            }
         }
     }
 }
@@ -262,7 +302,7 @@ fun ProfileScreenItems(
     modifier: Modifier = Modifier,
     name: String,
     city: String,
-    birthday: LocalDate,
+    birthday: LocalDate?,
     zodiac: String,
     onNameChange: () -> Unit,
     onCityChange: () -> Unit,
@@ -286,21 +326,21 @@ fun ProfileScreenItems(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Город",
-            content = city,
+            content = city.ifBlank { "Не указан" },
             isChangeable = true,
             onClick = onCityChange
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Дата рождения",
-            content = "${birthday.dayOfMonth}.${birthday.monthValue}.${birthday.year}",
+            content = if (birthday != null) "${birthday.dayOfMonth}.${birthday.monthValue}.${birthday.year}" else "Не указано",
             isChangeable = true,
             onClick = onBirthdayChange
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Знак зодиака",
-            content = zodiac,
+            content = zodiac.ifBlank { "День рождения не указан" },
             isChangeable = false
         )
     }
@@ -341,11 +381,15 @@ fun ProfileUnchangeableItemsGroup(
 @Preview
 @Composable
 private fun ProfileScreenPrev() {
-    andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
-        ProfileScreen(
+    MangoTestChatTheme {
+        ProfileScreenContent(
             navigateToCityEdit = {},
             navigateToNameEdit = {},
             navigateBack = {},
+            retry = {},
+            profileState = ProfileState.Success(User.empty()),
+            updateImage = {},
+            updateBirthday = {}
         )
     }
 }

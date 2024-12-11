@@ -6,3 +6,5 @@ import kotlinx.serialization.Serializable
 data class UserResponse(
     val profile_data: ProfileData
 )
+
+fun UserResponse.asUser() = profile_data.asUser()
