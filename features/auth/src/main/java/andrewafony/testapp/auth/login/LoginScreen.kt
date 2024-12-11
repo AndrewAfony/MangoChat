@@ -47,6 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joelkanyi.jcomposecountrycodepicker.component.KomposeCountryCodePicker
 import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryCodePickerState
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -66,6 +69,7 @@ fun LoginScreen(
         modifier = modifier,
         authState = authState,
         authUiState = authUiState,
+        isError = viewModel.error,
         updateUiState = viewModel::updateUiState,
         handleButton = viewModel::handleButton,
         backToPhone = viewModel::backToPhone,
@@ -80,6 +84,7 @@ fun LoginScreenContent(
     modifier: Modifier = Modifier,
     authState: AuthState,
     authUiState: AuthUiState,
+    isError: SharedFlow<Boolean>,
     updateUiState: (UiEvent) -> Unit,
     handleButton: (String) -> Unit,
     backToPhone: () -> Unit,
@@ -112,10 +117,13 @@ fun LoginScreenContent(
         IntOffset(if (!isVisible) width * 3 else 0, 0)
     }
 
+    LaunchedEffect(Unit) {
+       isError.collectLatest {
+           context.toast("Error")
+       }
+    }
+
     LaunchedEffect(authState) {
-        if (authState is AuthState.Error) {
-            context.toast("Error: ${authState.message}")
-        }
 
         if (authState is AuthState.Registration) {
             navigateToRegistration(phoneState.getFullyFormattedPhoneNumber())
@@ -218,6 +226,7 @@ private fun LogScreenPrev() {
                 handleButton = {},
                 backToPhone = {},
                 clearState = {},
+                isError = MutableSharedFlow<Boolean>(),
                 navigateToRegistration = {},
                 navigateToHome = {},
             )

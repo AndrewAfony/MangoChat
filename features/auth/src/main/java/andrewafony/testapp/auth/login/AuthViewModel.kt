@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import andrewafony.testapp.domain.model.Result
 import android.util.Log
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
@@ -21,6 +23,9 @@ class AuthViewModel(
 
     private val _authUiState = MutableStateFlow(AuthUiState())
     val authUiState: StateFlow<AuthUiState> = _authUiState
+
+    private val _error = MutableSharedFlow<Boolean>()
+    val error: SharedFlow<Boolean> = _error
 
     fun handleButton(fullNumber: String) {
         if (authState.value is AuthState.EnterCode) {
@@ -35,7 +40,10 @@ class AuthViewModel(
                                 if (result.data) AuthState.SignIn else AuthState.Registration
                             }
 
-                            is Result.Error -> AuthState.Error(result.message)
+                            is Result.Error -> {
+                                _error.emit(true)
+                                AuthState.EnterCode
+                            }
                         }
                 }
             }
@@ -48,7 +56,8 @@ class AuthViewModel(
                         _authUiState.update { it.copy(isCode = true) }
                         _authState.value = AuthState.EnterCode
                     } else {
-                        _authState.value = AuthState.Error("")
+                        _error.emit(true)
+                        _authState.value = AuthState.SignedOut
                     }
                 }
             }
@@ -89,7 +98,7 @@ sealed interface UiEvent {
 data class AuthUiState(
     val phone: String = "",
     val code: String = "",
-    val isCode: Boolean = false,
+    val isCode: Boolean = false
 )
 
 sealed interface AuthState {
@@ -97,8 +106,6 @@ sealed interface AuthState {
     data object SignedOut : AuthState
 
     data object Loading : AuthState
-
-    data class Error(val message: String) : AuthState
 
     data object EnterCode : AuthState
 
