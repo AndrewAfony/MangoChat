@@ -8,7 +8,9 @@ import java.time.LocalDate
 
 interface UserRepository {
 
-    fun userInfo() : Flow<Result<User>>
+    fun user() : Flow<User>
+
+    fun userInfo() : Flow<Result<Boolean>>
 
     suspend fun updateUserInfo(field: UserField)
 }

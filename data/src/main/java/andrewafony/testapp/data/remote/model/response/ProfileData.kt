@@ -5,6 +5,7 @@ import andrewafony.testapp.data.utils.toLocalDate
 import andrewafony.testapp.data.utils.toZodiac
 import andrewafony.testapp.domain.model.User
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -29,8 +30,7 @@ data class ProfileData(
 )
 
 fun ProfileData.asUser() = User(
-    name = name.substringBefore(" "),
-    surname = name.substringAfter(" "),
+    name = name,
     username = username,
     image = avatar?.toUri() ?: Uri.EMPTY,
     phone = phone.toPhoneMask(),
@@ -41,19 +41,24 @@ fun ProfileData.asUser() = User(
     about = status ?: ""
 )
 
-fun ProfileData.asEntity() = UserEntity(
-    id = 0,
-    name = name,
-    username = username,
-    avatar = avatar?.toUri(),
-    birthday = birthday.toLocalDate(),
-    city = city,
-    last = last,
-    status = status,
-    phone = phone.toPhoneMask(),
-    created = created,
-    zodiac = birthday
-)
+fun ProfileData.asEntity(): UserEntity {
+
+    val birthday = birthday.toLocalDate()
+
+    return UserEntity(
+        id = 0,
+        name = name,
+        username = username,
+        avatar = avatar?.toUri(),
+        birthday = birthday,
+        city = city,
+        last = last,
+        status = status,
+        phone = phone.toPhoneMask(),
+        created = created,
+        zodiac = birthday?.toZodiac()
+    )
+}
 
 private fun String.toPhoneMask(): String {
     val str = StringBuilder()

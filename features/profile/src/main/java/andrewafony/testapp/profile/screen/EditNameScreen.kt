@@ -37,14 +37,11 @@ fun EditNameScreen(
     navigateBack: () -> Unit
 ) {
 
-    val userState by viewModel.profileState.collectAsStateWithLifecycle()
-    val userName = (userState as ProfileState.Success).user.name
-    val userSurname = (userState as ProfileState.Success).user.surname
+    val user by viewModel.user.collectAsStateWithLifecycle()
 
     EditNameScreenContent(
         modifier = modifier,
-        name = userName,
-        surname = userSurname,
+        name = user.name,
         updateName = viewModel::updateName,
         navigateBack = navigateBack
     )
@@ -54,13 +51,11 @@ fun EditNameScreen(
 fun EditNameScreenContent(
     modifier: Modifier = Modifier,
     name: String,
-    surname: String,
-    updateName: (String, String) -> Unit,
+    updateName: (String) -> Unit,
     navigateBack: () -> Unit
 ) {
 
     var currentName by rememberSaveable { mutableStateOf(name) }
-    var currentSurname by rememberSaveable { mutableStateOf(surname) }
 
     Column(
         modifier = modifier
@@ -79,14 +74,6 @@ fun EditNameScreenContent(
 
         MangoTextField(
             modifier = Modifier
-                .padding(top = 12.dp),
-            field = currentSurname,
-            placeholder = "Фамилия",
-            onEdit = { currentSurname = it }
-        )
-
-        MangoTextField(
-            modifier = Modifier
                 .padding(vertical = 12.dp)
                 .height(56.dp),
             field = currentName,
@@ -100,7 +87,7 @@ fun EditNameScreenContent(
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             onClick = {
-                updateName(currentName, currentSurname)
+                updateName(currentName)
                 navigateBack()
             }
         ) {
@@ -115,9 +102,8 @@ private fun EditNameScreenPrev() {
     andrewafony.testapp.designsystem.theme.MangoTestChatTheme {
         Surface {
             EditNameScreenContent(
-                updateName = {_, _ ->},
+                updateName = {},
                 name = "Andrew",
-                surname = "Afanasiev",
                 navigateBack = {}
             )
         }

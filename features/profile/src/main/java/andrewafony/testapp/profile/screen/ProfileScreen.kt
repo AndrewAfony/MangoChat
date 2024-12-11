@@ -76,6 +76,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.toCoilUri
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
@@ -93,6 +95,7 @@ fun ProfileScreen(
 
     ProfileScreenContent(
         modifier = modifier,
+        userState = viewModel.user,
         profileState = profileState,
         updateBirthday = viewModel::updateBirthday,
         updateImage = viewModel::updateImage,
@@ -108,6 +111,7 @@ fun ProfileScreen(
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
     profileState: ProfileState,
+    userState: StateFlow<User>,
     updateImage: (Uri?) -> Unit,
     updateBirthday: (LocalDate) -> Unit,
     retry: () -> Unit,
@@ -127,7 +131,10 @@ fun ProfileScreenContent(
 
     val iconEdit = rememberVectorPainter(andrewafony.testapp.designsystem.icons.IconPhoto)
     val primaryColor = MaterialTheme.colorScheme.primary
+
     var editImageButtonOffset = remember { Offset(0f, 0f) }
+
+    Log.d("MyHelper", "bottom: $isBirthdayBottomSheet")
 
     val launcher =
         rememberLauncherForActivityResult(
@@ -173,9 +180,12 @@ fun ProfileScreenContent(
             }
 
             is ProfileState.Success -> {
+
+                val user by userState.collectAsStateWithLifecycle()
+
                 AsyncImage(
-                    model = profileState.user.image,
-                    contentDescription = "",
+                    model = user.image,
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.person_placeholder),
                     error = painterResource(R.drawable.person_placeholder),
@@ -244,8 +254,8 @@ fun ProfileScreenContent(
                 )
 
                 ProfileUnchangeableItemsGroup(
-                    username = profileState.user.username,
-                    phone = profileState.user.phone,
+                    username = user.username,
+                    phone = user.phone,
                     onClick = {
                         clipboardManager.setText(AnnotatedString(it))
                         context.toast("Copied")
@@ -253,23 +263,22 @@ fun ProfileScreenContent(
                 )
 
                 ProfileScreenItems(
-                    name = "${profileState.user.name} ${profileState.user.surname}",
-                    birthday = profileState.user.birthday,
-                    city = profileState.user.city,
-                    zodiac = profileState.user.zodiac,
+                    name = user.name,
+                    birthday = user.birthday,
+                    city = user.city,
+                    zodiac = user.zodiac,
                     onNameChange = navigateToNameEdit,
                     onCityChange = navigateToCityEdit,
                     onBirthdayChange = { isBirthdayBottomSheet = true }
                 )
 
                 ProfileAboutItem(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
                 if (isBirthdayBottomSheet) {
                     BirthdayEditBottomSheet(
-                        birthday = profileState.user.birthday,
+                        birthday = user.birthday,
                         sheetState = birthdayBottomSheetState,
                         updateBirthday = updateBirthday,
                         onDismiss = {
@@ -347,7 +356,7 @@ fun ProfileScreenItems(
             .background(andrewafony.testapp.designsystem.theme.veryLightGray)
     ) {
         ProfileItem(
-            title = "Имя, фамилия",
+            title = "Имя",
             content = name,
             isChangeable = true,
             onClick = onNameChange
@@ -416,7 +425,8 @@ private fun ProfileScreenPrev() {
             navigateToNameEdit = {},
             navigateBack = {},
             retry = {},
-            profileState = ProfileState.Success(User.empty()),
+            userState = MutableStateFlow(User.empty()),
+            profileState = ProfileState.Success,
             updateImage = {},
             updateBirthday = {}
         )

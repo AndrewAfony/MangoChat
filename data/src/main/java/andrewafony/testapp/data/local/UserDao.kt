@@ -6,10 +6,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 @Dao
 interface UserDao {
+
+    @Query("SELECT * FROM userentity WHERE id = 0")
+    fun currentUser() : Flow<UserEntity>
 
     @Query("SELECT * FROM userentity WHERE id = :userId")
     suspend fun userInfo(userId: Int = 0): UserEntity

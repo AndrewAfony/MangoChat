@@ -26,15 +26,14 @@ data class UserEntity(
  * Get from database
  */
 fun UserEntity.asUser() = User(
-    name = name.substringBefore(" "),
-    surname = name.substringAfter(" "),
+    name = name,
     username = username,
     image = avatar ?: Uri.EMPTY,
     phone = phone,
     status = last ?: "",
     birthday = birthday,
     city = city ?: "",
-    zodiac = zodiac ?: birthday?.toZodiac() ?: "",
+    zodiac = birthday?.toZodiac() ?: "",
     about = status ?: ""
 )
 
@@ -43,7 +42,7 @@ fun UserEntity.asUser() = User(
  */
 fun User.asEntity() = UserEntity(
     id = 0,
-    name = "$name $surname",
+    name = name,
     username = username,
     avatar = image,
     birthday = birthday,

@@ -1,11 +1,14 @@
 package andrewafony.testapp.profile.screen
 
+import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.Picker
 import andrewafony.testapp.designsystem.component.rememberPickerState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import java.time.LocalDate
 import java.time.Month
 
@@ -40,8 +44,8 @@ fun BirthdayEditBottomSheet(
         BirthdayEditBottomSheetContent(
             birthday = birthday,
             updateBirthday = {
-                updateBirthday(it)
                 onDismiss()
+                updateBirthday(it)
             }
         )
     }
@@ -82,8 +86,9 @@ fun BirthdayEditBottomSheetContent(
 
     Column(
         modifier = modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.Start
+            .fillMaxWidth()
+            .padding(top = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier
@@ -116,7 +121,13 @@ fun BirthdayEditBottomSheetContent(
             )
         }
 
-        Button(
+        MangoButtonWithLoader(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .padding(vertical = 16.dp)
+                .height(45.dp),
+            text = "Сохранить",
+            isLoader = false,
             onClick = {
                 updateBirthday(
                     LocalDate.of(
@@ -126,9 +137,7 @@ fun BirthdayEditBottomSheetContent(
                     )
                 )
             }
-        ) {
-            Text("Сохранить")
-        }
+        )
     }
 
 }

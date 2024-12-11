@@ -8,8 +8,15 @@ import andrewafony.testapp.domain.repository.UserRepository
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -17,10 +24,17 @@ class ProfileViewModel(
     private val userRepository: UserRepository,
 ) : ViewModel() {
 
+    val user: StateFlow<User> = userRepository.user()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = User.empty()
+        )
+
     val profileState = userRepository.userInfo()
         .map { result ->
             if (result is Result.Success)
-                ProfileState.Success(result.data)
+                ProfileState.Success
             else
                 ProfileState.Error
         }
@@ -34,7 +48,6 @@ class ProfileViewModel(
         viewModelScope.launch {
             image?.let { photo ->
                 userRepository.updateUserInfo(UserField.Image(photo))
-                profileState.restart()
             }
         }
     }
@@ -42,14 +55,12 @@ class ProfileViewModel(
     fun updateBirthday(birthday: LocalDate) {
         viewModelScope.launch {
             userRepository.updateUserInfo(UserField.Birthday(birthday))
-            profileState.restart()
         }
     }
 
-    fun updateName(name: String, surname: String) {
+    fun updateName(name: String) {
         viewModelScope.launch {
-            userRepository.updateUserInfo(UserField.Name("$name $surname"))
-            profileState.restart()
+            userRepository.updateUserInfo(UserField.Name(name))
         }
     }
 
@@ -57,7 +68,6 @@ class ProfileViewModel(
         viewModelScope.launch {
             if (city.isNotBlank()) {
                 userRepository.updateUserInfo(UserField.City(city))
-                profileState.restart()
             }
         }
     }
@@ -69,5 +79,5 @@ sealed interface ProfileState {
 
     data object Error : ProfileState
 
-    data class Success(val user: User) : ProfileState
+    data object Success : ProfileState
 }

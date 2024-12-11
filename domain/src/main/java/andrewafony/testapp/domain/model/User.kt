@@ -5,7 +5,6 @@ import java.time.LocalDate
 
 data class User(
     val name: String,
-    val surname: String,
     val username: String,
     val image: Uri,
     val phone: String,
@@ -18,8 +17,7 @@ data class User(
 
     companion object {
         fun empty() = User(
-            name = "Andrew",
-            surname = "Afanasiev",
+            name = "Andrew Afanasiev",
             username = "@andrew_afony",
             image = Uri.EMPTY,
             status = "Online",
