@@ -81,8 +81,7 @@ class AuthViewModel(
             }
 
             is UiEvent.Code -> {
-                _authUiState.update { it.copy(code = event.code) }
-
+                _authUiState.update { it.copy(code = event.code, isCodeValid = event.code.length == 6) }
             }
         }
     }
@@ -98,7 +97,8 @@ sealed interface UiEvent {
 data class AuthUiState(
     val phone: String = "",
     val code: String = "",
-    val isCode: Boolean = false
+    val isCode: Boolean = false,
+    val isCodeValid: Boolean = false
 )
 
 sealed interface AuthState {

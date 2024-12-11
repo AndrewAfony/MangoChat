@@ -205,7 +205,11 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxWidth(0.9f),
                 text = "Войти",
-                isEnabled = phoneState.isPhoneNumberValid(),
+                isEnabled = when(authState) {
+                    is AuthState.SignedOut -> phoneState.isPhoneNumberValid()
+                    is AuthState.EnterCode -> authUiState.isCodeValid
+                    else -> true
+                },
                 isLoader = authState is AuthState.Loading,
                 animatedContentAlignment = Alignment.CenterEnd,
                 onClick = { if (authState !is AuthState.Loading) handleButton(phoneState.getFullPhoneNumber()) }
