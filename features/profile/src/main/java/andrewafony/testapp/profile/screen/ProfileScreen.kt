@@ -5,9 +5,12 @@ import andrewafony.testapp.designsystem.toast
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.profile.ProfileState
 import andrewafony.testapp.profile.ProfileViewModel
+import andrewafony.testapp.profile.R
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
 import andrewafony.testapp.profile.screen.components.ProfileItem
+import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -29,6 +32,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,12 +68,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.toCoilUri
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
@@ -90,7 +96,7 @@ fun ProfileScreen(
         profileState = profileState,
         updateBirthday = viewModel::updateBirthday,
         updateImage = viewModel::updateImage,
-        retry = viewModel::retry,
+        retry = viewModel.profileState::restart,
         navigateToNameEdit = navigateToNameEdit,
         navigateToCityEdit = navigateToCityEdit,
         navigateBack = navigateBack
@@ -171,6 +177,11 @@ fun ProfileScreenContent(
                     model = profileState.user.image,
                     contentDescription = "",
                     contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.person_placeholder),
+                    error = painterResource(R.drawable.person_placeholder),
+                    onError = {
+                        Log.d("MyHelper", "imageError: ${it.result.throwable}")
+                    },
                     modifier = Modifier
                         .padding(vertical = 16.dp)
                         .size(128.dp)
@@ -309,6 +320,24 @@ fun ProfileScreenItems(
     onBirthdayChange: () -> Unit,
 ) {
 
+    val birthdayDay: String? = remember(birthday) {
+        birthday?.let {
+            if (it.dayOfMonth < 10)
+                "0${it.dayOfMonth}"
+            else
+                it.dayOfMonth.toString()
+        }
+    }
+
+    val birthdayMonth: String? = remember(birthday) {
+        birthday?.let {
+            if (it.monthValue < 10)
+                "0${it.monthValue}"
+            else
+                it.monthValue.toString()
+        }
+    }
+
     Column(
         modifier = modifier
             .imePadding()
@@ -333,7 +362,7 @@ fun ProfileScreenItems(
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
             title = "Дата рождения",
-            content = if (birthday != null) "${birthday.dayOfMonth}.${birthday.monthValue}.${birthday.year}" else "Не указано",
+            content = if (birthday != null) "$birthdayDay.$birthdayMonth.${birthday.year}" else "Не указано",
             isChangeable = true,
             onClick = onBirthdayChange
         )

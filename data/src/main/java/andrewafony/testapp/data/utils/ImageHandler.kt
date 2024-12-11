@@ -1,4 +1,4 @@
-package andrewafony.testapp.data
+package andrewafony.testapp.data.utils
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,11 +6,38 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import androidx.core.net.toUri
 import java.io.ByteArrayOutputStream
+import java.io.File
 
-class ImageEncoder(
+class ImageHandler(
     private val context: Context
 ) {
+
+    fun saveImageLocally(newImageUri: Uri): Uri? {
+        val file = File(context.filesDir, "profileImage_${System.currentTimeMillis()}")
+
+        if (file.exists()) {
+            file.delete()
+        }
+
+        return try {
+            val inputStream = context.contentResolver.openInputStream(newImageUri)
+            val outputStream = file.outputStream()
+
+            inputStream?.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            file.toUri()
+        } catch (e: Exception) {
+            Log.d("MyHelper", "saveImageLocally: ${e.localizedMessage}")
+            null
+        }
+    }
+
 
     fun encode(image: Uri?) : String? {
         if (image == null) return null

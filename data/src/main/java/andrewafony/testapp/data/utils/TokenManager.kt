@@ -1,4 +1,4 @@
-package andrewafony.testapp.data
+package andrewafony.testapp.data.utils
 
 import android.content.Context
 import androidx.datastore.core.DataStore

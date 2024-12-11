@@ -54,6 +54,8 @@ fun BirthdayEditBottomSheetContent(
     updateBirthday: (LocalDate) -> Unit,
 ) {
 
+    val currentYear = remember { LocalDate.now().year }
+
     val days = remember { (1..31).map { it.toString() } }
     val daysState = rememberPickerState()
 
@@ -75,7 +77,7 @@ fun BirthdayEditBottomSheetContent(
     }
     val monthState = rememberPickerState()
 
-    val years = remember { (1901..2024).map { it.toString() } }
+    val years = remember { (1901..currentYear).map { it.toString() } }
     val yearsState = rememberPickerState()
 
     Column(

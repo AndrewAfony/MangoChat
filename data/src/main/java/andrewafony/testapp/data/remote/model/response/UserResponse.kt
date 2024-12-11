@@ -8,3 +8,5 @@ data class UserResponse(
 )
 
 fun UserResponse.asUser() = profile_data.asUser()
+
+fun UserResponse.asEntity() = profile_data.asEntity()

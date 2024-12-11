@@ -1,5 +1,8 @@
 package andrewafony.testapp.data.remote.model.response
 
+import andrewafony.testapp.data.local.entities.UserEntity
+import andrewafony.testapp.data.utils.toLocalDate
+import andrewafony.testapp.data.utils.toZodiac
 import andrewafony.testapp.domain.model.User
 import android.net.Uri
 import androidx.core.net.toUri
@@ -11,6 +14,7 @@ data class ProfileData(
     val id: Int,
     val name: String,
     val username: String,
+    val phone: String,
     val avatar: String?,
     val avatars: Avatars?,
     val birthday: String?,
@@ -18,7 +22,6 @@ data class ProfileData(
     val last: String?,
     val online: Boolean?,
     val status: String?,
-    val phone: String?,
     val created: String?,
     val completed_task: Int?,
     val instagram: String?,
@@ -30,10 +33,42 @@ fun ProfileData.asUser() = User(
     surname = name.substringAfter(" "),
     username = username,
     image = avatar?.toUri() ?: Uri.EMPTY,
-    phone = phone ?: "",
+    phone = phone.toPhoneMask(),
     status = last ?: "",
-    birthday = if (birthday != null) LocalDate.parse(birthday) else null,
+    birthday = birthday.toLocalDate(),
     city = city ?: "",
-    zodiac = "",
+    zodiac = birthday?.let { it.toLocalDate()?.toZodiac() } ?: "",
     about = status ?: ""
 )
+
+fun ProfileData.asEntity() = UserEntity(
+    id = 0,
+    name = name,
+    username = username,
+    avatar = avatar?.toUri(),
+    birthday = birthday.toLocalDate(),
+    city = city,
+    last = last,
+    status = status,
+    phone = phone.toPhoneMask(),
+    created = created,
+    zodiac = birthday
+)
+
+private fun String.toPhoneMask(): String {
+    val str = StringBuilder()
+
+    forEachIndexed { index, c ->
+        with(str) {
+            when(index) {
+                0 -> append("+$c (")
+                3 -> append("$c) ")
+                6 -> append("$c-")
+                8 -> append("$c-")
+                else -> append(c)
+            }
+        }
+    }
+
+    return str.toString()
+}

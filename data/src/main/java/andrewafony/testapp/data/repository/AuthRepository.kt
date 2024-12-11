@@ -1,7 +1,7 @@
 package andrewafony.testapp.data.repository
 
-import andrewafony.testapp.data.Token
-import andrewafony.testapp.data.TokenManager
+import andrewafony.testapp.data.utils.Token
+import andrewafony.testapp.data.utils.TokenManager
 import andrewafony.testapp.data.remote.model.request.Auth
 import andrewafony.testapp.data.remote.model.request.AuthCode
 import andrewafony.testapp.data.remote.model.request.Registration

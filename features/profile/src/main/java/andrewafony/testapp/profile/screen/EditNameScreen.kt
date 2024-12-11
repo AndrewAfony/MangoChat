@@ -1,6 +1,7 @@
 package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.component.MangoTextField
+import andrewafony.testapp.profile.ProfileState
 import andrewafony.testapp.profile.ProfileViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -36,12 +37,14 @@ fun EditNameScreen(
     navigateBack: () -> Unit
 ) {
 
-    val userState by viewModel.userState.collectAsStateWithLifecycle()
+    val userState by viewModel.profileState.collectAsStateWithLifecycle()
+    val userName = (userState as ProfileState.Success).user.name
+    val userSurname = (userState as ProfileState.Success).user.surname
 
     EditNameScreenContent(
         modifier = modifier,
-        name = userState.name,
-        surname = userState.surname,
+        name = userName,
+        surname = userSurname,
         updateName = viewModel::updateName,
         navigateBack = navigateBack
     )
@@ -104,38 +107,6 @@ fun EditNameScreenContent(
             Text(text = "Сохранить")
         }
     }
-}
-
-@Composable
-fun EditTextField(
-    modifier: Modifier = Modifier,
-    field: String,
-    placeholder: String,
-    onEdit: (String) -> Unit,
-) {
-
-    OutlinedTextField(
-        modifier = modifier
-            .fillMaxWidth(0.9f),
-        value = field,
-        onValueChange = onEdit,
-        placeholder = {
-            Text(text = placeholder)
-        },
-        shape = RoundedCornerShape(16.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Color.Transparent,
-            focusedBorderColor = Color.Transparent,
-            focusedTextColor = Color.Black,
-            unfocusedTextColor = Color.Black,
-            errorTextColor = Color.Red,
-            unfocusedContainerColor = andrewafony.testapp.designsystem.theme.veryLightGray,
-            focusedContainerColor = andrewafony.testapp.designsystem.theme.veryLightGray
-        ),
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Words
-        )
-    )
 }
 
 @Preview

@@ -1,7 +1,7 @@
 package andrewafony.testapp.data.remote.interceptors
 
-import andrewafony.testapp.data.Token
-import andrewafony.testapp.data.TokenManager
+import andrewafony.testapp.data.utils.Token
+import andrewafony.testapp.data.utils.TokenManager
 import andrewafony.testapp.data.remote.service.AuthService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
