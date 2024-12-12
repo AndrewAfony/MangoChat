@@ -1,7 +1,8 @@
 package andrewafony.testapp.home
 
-import andrewafony.testapp.designsystem.TEST_IMAGE
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import andrewafony.testapp.domain.model.Chat
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,7 @@ import coil3.compose.AsyncImage
 @Composable
 fun HomeScreenChats(
     modifier: Modifier = Modifier,
+    chatList: List<Chat>,
     chatsListState: LazyListState,
     navigateToChat: (String) -> Unit
 ) {
@@ -37,11 +40,13 @@ fun HomeScreenChats(
         modifier = modifier
             .fillMaxSize(),
     ) {
-        items(40) {
+        items(chatList, key = { it.id }) { item ->
             HomeScreenChatItem(
-                image = TEST_IMAGE,
-                name = "Andrew Afanasiev",
-                message = "Last message",
+                image = item.image,
+                name = item.name,
+                message = item.lastMessage ?: "",
+                newMessages = item.newMessages,
+                lastMessageTime = item.lastMessageTime,
                 onChatClick = navigateToChat
             )
         }
@@ -54,6 +59,8 @@ fun HomeScreenChatItem(
     image: String,
     name: String,
     message: String,
+    lastMessageTime: String,
+    newMessages: Int,
     onChatClick: (String) -> Unit,
 ) {
 
@@ -63,7 +70,7 @@ fun HomeScreenChatItem(
         leadingContent = {
             AsyncImage(
                 model = image,
-                contentDescription = "",
+                contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(CircleShape)
@@ -74,7 +81,12 @@ fun HomeScreenChatItem(
             Text(text = name, maxLines = 1, overflow = TextOverflow.Ellipsis)
         },
         supportingContent = {
-            Text(text = message, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                text = message,
+                color = Color.Gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         },
         trailingContent = {
             Column(
@@ -82,22 +94,25 @@ fun HomeScreenChatItem(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "12:43",
+                    text = lastMessageTime,
+                    color = Color.Gray,
                     style = MaterialTheme.typography.labelMedium,
                 )
                 Spacer(modifier = Modifier.size(4.dp))
-                Box(
-                    modifier = Modifier
-                        .size(18.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "2",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.Black
-                    )
+                if (newMessages > 0) {
+                    Box(
+                        modifier = Modifier
+                            .size(18.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = newMessages.toString(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Black
+                        )
+                    }
                 }
             }
         },
@@ -116,7 +131,9 @@ private fun HomeScreenChatsPrev() {
             HomeScreenChatItem(
                 image = "",
                 name = "Andrew",
-                message = "Message 1",
+                message = "Message text to show under name dsknfsdkf",
+                newMessages = 3,
+                lastMessageTime = "12:43",
                 onChatClick = {}
             )
         }

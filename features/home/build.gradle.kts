@@ -10,6 +10,8 @@ android {
 
 dependencies {
 
+    implementation(projects.domain)
+
     implementation(projects.core.designsystem)
     api(projects.features.homeApi)
 
@@ -20,4 +22,5 @@ dependencies {
 
     // ==== Coil ====
     implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 }
