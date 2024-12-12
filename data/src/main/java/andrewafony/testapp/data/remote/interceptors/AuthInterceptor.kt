@@ -1,6 +1,7 @@
 package andrewafony.testapp.data.remote.interceptors
 
 import andrewafony.testapp.data.utils.TokenManager
+import android.util.Log
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

@@ -114,7 +114,7 @@ fun SettingsScreenContent(
             }
             is SettingsState.Success -> {
                 AsyncImage(
-                    model = "",
+                    model = settingsState.image,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
