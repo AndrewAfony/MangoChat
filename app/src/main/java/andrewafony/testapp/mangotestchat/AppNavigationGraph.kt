@@ -22,19 +22,25 @@ fun AppNavigationGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     currentRoute: String?,
+    isLogged: Boolean,
     featureProvider: FeatureDestinationProvider,
 ) {
 
-    val root = remember { featureProvider.provide(HomeFeatureApi::class.java) }
+    val homeFeature = featureProvider.provide(HomeFeatureApi::class.java)
+    val authFeature = featureProvider.provide(AuthFeatureApi::class.java)
 
     NavHost(
         navController = navController,
-        startDestination = featureProvider.provide(AuthFeatureApi::class.java).route,
+        startDestination = if (isLogged) homeFeature.route else authFeature.route,
         enterTransition = {
-            if (currentRoute == "home" || currentRoute == "settings") {
-                EnterTransition.None
-            } else
+            if (isLogged) {
+                if (currentRoute in featureProvider.topRoutes) {
+                    EnterTransition.None
+                } else
+                    enterPush()
+            } else {
                 enterPush()
+            }
         },
         exitTransition = { exitPush() },
         popEnterTransition = { enterPop() },
@@ -42,13 +48,13 @@ fun AppNavigationGraph(
     ) {
 
         register(
-            featureApi = featureProvider.provide(AuthFeatureApi::class.java),
+            featureApi = authFeature,
             navController = navController,
             modifier = modifier
         )
 
         register(
-            featureApi = root,
+            featureApi = homeFeature,
             navController = navController,
             modifier = modifier
         )

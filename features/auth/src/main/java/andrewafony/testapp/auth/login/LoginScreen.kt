@@ -5,6 +5,7 @@ import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
 import andrewafony.testapp.designsystem.toast
+import android.util.Log
 import android.view.WindowManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntOffset
@@ -73,7 +74,7 @@ fun LoginScreen(
         modifier = modifier,
         authState = authState,
         authUiState = authUiState,
-        isError = viewModel.error,
+        errorState = viewModel.error,
         updateUiState = viewModel::updateUiState,
         handleButton = viewModel::handleButton,
         backToPhone = viewModel::backToPhone,
@@ -88,7 +89,7 @@ fun LoginScreenContent(
     modifier: Modifier = Modifier,
     authState: AuthState,
     authUiState: AuthUiState,
-    isError: SharedFlow<Boolean>,
+    errorState: SharedFlow<String>,
     updateUiState: (UiEvent) -> Unit,
     handleButton: (String) -> Unit,
     backToPhone: () -> Unit,
@@ -125,8 +126,8 @@ fun LoginScreenContent(
     }
 
     LaunchedEffect(Unit) {
-        isError.collectLatest {
-            context.toast("Error")
+        errorState.collectLatest {
+            context.toast("Error: $it")
         }
     }
 
@@ -137,6 +138,7 @@ fun LoginScreenContent(
             clearState()
         }
         if (authState is AuthState.SignIn) {
+            Log.d("MyHelper", "nav to home")
             navigateToHome()
         }
 
@@ -245,7 +247,7 @@ private fun LogScreenPrev() {
                 handleButton = {},
                 backToPhone = {},
                 clearState = {},
-                isError = MutableSharedFlow<Boolean>(),
+                errorState = MutableSharedFlow(),
                 navigateToRegistration = {},
                 navigateToHome = {},
             )

@@ -21,7 +21,9 @@ class HomeFeatureImpl internal constructor(
         navController: NavHostController,
         modifier: Modifier
     ) {
-        navGraphBuilder.composable(homeRoute) {
+        navGraphBuilder.composable(
+            route = homeRoute
+        ) {
             HomeScreen(
                 modifier = modifier,
                 navigateToChat = { navController.navigate(chatApi.route) }

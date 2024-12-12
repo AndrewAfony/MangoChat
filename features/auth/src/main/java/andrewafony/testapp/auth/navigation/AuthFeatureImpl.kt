@@ -7,6 +7,7 @@ import andrewafony.testapp.home_api.HomeFeatureApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -37,7 +38,9 @@ class AuthFeatureImpl(
                 number = backStackEntry.arguments?.getString(phoneArg) ?: "",
                 navigateBack = { navController.popBackStack() },
                 navigateToHome = {
-                    navController.navigate(homeFeature.route) {
+                    navController.navigate(
+                        route = homeFeature.route
+                    ) {
                         popUpTo(authRoute) { inclusive = true }
                     }
                 }

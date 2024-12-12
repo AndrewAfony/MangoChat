@@ -1,5 +1,6 @@
 package andrewafony.testapp.mangotestchat
 
+import andrewafony.testapp.chat_api.ChatFeatureApi
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.home_api.HomeFeatureApi
 import andrewafony.testapp.settings_api.SettingsFeatureApi
@@ -45,16 +46,22 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModel()
 
     private val featureProvider: FeatureDestinationProvider by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val homeFeature = featureProvider.provide(HomeFeatureApi::class.java)
-        val settingsFeature = featureProvider.provide(SettingsFeatureApi::class.java)
+        val isLogged = viewModel.isLogged()
+
+        val homeFeatureRoute = featureProvider.provide(HomeFeatureApi::class.java).route
+        val settingsFeatureRoute = featureProvider.provide(SettingsFeatureApi::class.java).route
+        val chatFeatureRoute = featureProvider.provide(ChatFeatureApi::class.java).route
 
         setContent {
 
@@ -67,9 +74,9 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         AnimatedVisibility(
-                            visible = currentRoute == "home" || currentRoute == "settings",
+                            visible = currentRoute in featureProvider.topRoutes,
                             enter = slideInVertically(animationSpec = tween(500), initialOffsetY = { it }),
-                            exit = if (currentRoute == "chat") {
+                            exit = if (currentRoute == chatFeatureRoute) {
                                 slideOutHorizontally(animationSpec = tween(500), targetOffsetX = { -it } )
                             } else
                                 slideOutVertically(animationSpec = tween(300), targetOffsetY = { it } )
@@ -77,13 +84,13 @@ class MainActivity : ComponentActivity() {
                             BottomNavigation(
                                 currentRoute = currentRoute ?: "",
                                 navigateToHome = {
-                                    navController.navigate(homeFeature.route) {
-                                        popUpTo(homeFeature.route) { inclusive = true }
+                                    navController.navigate(homeFeatureRoute) {
+                                        popUpTo(homeFeatureRoute) { inclusive = true }
                                     }
                                 },
                                 navigateToSettings = {
-                                    navController.navigate(settingsFeature.route) {
-                                        popUpTo(settingsFeature.route) { inclusive = true }
+                                    navController.navigate(settingsFeatureRoute) {
+                                        popUpTo(settingsFeatureRoute) { inclusive = true }
                                     }
                                 }
                             )
@@ -95,7 +102,8 @@ class MainActivity : ComponentActivity() {
 //                        modifier = Modifier.padding(innerPadding),
                         navController = navController,
                         featureProvider = featureProvider,
-                        currentRoute = currentRoute
+                        currentRoute = currentRoute,
+                        isLogged = isLogged
                     )
                 }
             }

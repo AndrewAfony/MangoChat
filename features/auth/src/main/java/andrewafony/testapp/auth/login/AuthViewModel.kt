@@ -24,8 +24,8 @@ class AuthViewModel(
     private val _authUiState = MutableStateFlow(AuthUiState())
     val authUiState: StateFlow<AuthUiState> = _authUiState
 
-    private val _error = MutableSharedFlow<Boolean>()
-    val error: SharedFlow<Boolean> = _error
+    private val _error = MutableSharedFlow<String>()
+    val error: SharedFlow<String> = _error
 
     fun handleButton(fullNumber: String) {
         if (authState.value is AuthState.EnterCode) {
@@ -41,7 +41,7 @@ class AuthViewModel(
                             }
 
                             is Result.Error -> {
-                                _error.emit(true)
+                                _error.emit(result.message)
                                 AuthState.EnterCode
                             }
                         }
@@ -56,7 +56,7 @@ class AuthViewModel(
                         _authUiState.update { it.copy(isCode = true) }
                         _authState.value = AuthState.EnterCode
                     } else {
-                        _error.emit(true)
+                        _error.emit("")
                         _authState.value = AuthState.SignedOut
                     }
                 }
