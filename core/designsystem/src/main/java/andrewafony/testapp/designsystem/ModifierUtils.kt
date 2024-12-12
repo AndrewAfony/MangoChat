@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 
-const val TEST_IMAGE = "https://chi-russia.ru/upload/resize_cache/iblock/1c7/790_790_1/ttq27yl1iahlbmj2vyzzeog546idoghc.jpg"
+const val TEST_IMAGE = "https://avatars.mds.yandex.net/i?id=780d5144f133ebfb68341d04d4e794dd_l-5237646-images-thumbs&n=13"
 
 fun Modifier.disableClickAndRipple(): Modifier = composed {
     clickable(

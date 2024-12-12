@@ -30,7 +30,7 @@ fun StoryItem(
     ) {
         AsyncImage(
             model = image,
-            contentDescription = "",
+            contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .clip(CircleShape)

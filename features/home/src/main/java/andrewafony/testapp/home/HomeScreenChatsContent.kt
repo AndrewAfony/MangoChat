@@ -1,5 +1,6 @@
 package andrewafony.testapp.home
 
+import andrewafony.testapp.designsystem.TEST_IMAGE
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,7 +39,7 @@ fun HomeScreenChats(
     ) {
         items(40) {
             HomeScreenChatItem(
-                image = andrewafony.testapp.designsystem.R.drawable.test_image,
+                image = TEST_IMAGE,
                 name = "Andrew Afanasiev",
                 message = "Last message",
                 onChatClick = navigateToChat
@@ -50,7 +51,7 @@ fun HomeScreenChats(
 @Composable
 fun HomeScreenChatItem(
     modifier: Modifier = Modifier,
-    image: Int,
+    image: String,
     name: String,
     message: String,
     onChatClick: (String) -> Unit,
@@ -113,7 +114,7 @@ private fun HomeScreenChatsPrev() {
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             HomeScreenChatItem(
-                image = andrewafony.testapp.designsystem.R.drawable.test_image,
+                image = "",
                 name = "Andrew",
                 message = "Message 1",
                 onChatClick = {}

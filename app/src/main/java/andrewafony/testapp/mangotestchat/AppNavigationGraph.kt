@@ -12,10 +12,12 @@ import andrewafony.testapp.profile_api.ProfileFeatureApi
 import andrewafony.testapp.settings_api.SettingsFeatureApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun AppNavigationGraph(
@@ -33,14 +35,10 @@ fun AppNavigationGraph(
         navController = navController,
         startDestination = if (isLogged) homeFeature.route else authFeature.route,
         enterTransition = {
-            if (isLogged) {
-                if (currentRoute in featureProvider.topRoutes) {
-                    EnterTransition.None
-                } else
-                    enterPush()
-            } else {
+            if (currentRoute in featureProvider.topRoutes) {
+                EnterTransition.None
+            } else
                 enterPush()
-            }
         },
         exitTransition = { exitPush() },
         popEnterTransition = { enterPop() },
