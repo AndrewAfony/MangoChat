@@ -20,10 +20,6 @@ class MangoAuthenticator(
         return runBlocking {
             val newToken = authService.refreshToken(token)
 
-            if (!newToken.isSuccessful || newToken.body() == null) {
-                tokenManager.deleteToken()
-            }
-
             newToken.body()?.let {
                 it.accessToken?.let { tokenManager.saveToken(Token.Access(it)) }
                 it.refreshToken?.let { tokenManager.saveToken(Token.Refresh(it)) }

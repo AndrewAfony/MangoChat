@@ -138,3 +138,13 @@ class UserRepositoryImpl(
         }
     }
 }
+
+class TestUserRepository : UserRepository {
+
+    override fun user(): Flow<Result<User>> = flow {
+        delay(2000)
+        emit(Result.Success(User.empty()))
+    }
+
+    override suspend fun updateUserInfo(field: UserField) {}
+}

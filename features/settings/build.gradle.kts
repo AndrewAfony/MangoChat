@@ -10,8 +10,13 @@ android {
 
 dependencies {
 
+
+    implementation(projects.domain)
+
     implementation(projects.core.designsystem)
     implementation(projects.features.profileApi)
+
+    implementation(libs.compose.shimmer)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)

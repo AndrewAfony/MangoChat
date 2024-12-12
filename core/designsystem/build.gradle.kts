@@ -9,6 +9,8 @@ android {
 
 dependencies {
 
+    implementation(libs.compose.shimmer)
+
     api(libs.androidx.material3.android)
 
     implementation(libs.androidx.ui.tooling.preview.android)

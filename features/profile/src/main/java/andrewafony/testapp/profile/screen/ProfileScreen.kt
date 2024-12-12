@@ -5,7 +5,6 @@ import andrewafony.testapp.designsystem.toast
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.profile.ProfileState
 import andrewafony.testapp.profile.ProfileViewModel
-import andrewafony.testapp.profile.R
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
 import andrewafony.testapp.profile.screen.components.ProfileItem
 import android.net.Uri
@@ -143,12 +142,6 @@ fun ProfileScreenContent(
         ProfileScreenTopBar(navigateBack = navigateBack)
 
         when (profileState) {
-            is ProfileState.Loading -> {
-                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-
             is ProfileState.Error -> {
                 Column(
                     modifier = Modifier.weight(1f),
@@ -167,14 +160,20 @@ fun ProfileScreenContent(
                 }
             }
 
+            is ProfileState.Loading -> {
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+
             is ProfileState.Success -> {
 
                 AsyncImage(
                     model = profileState.user.image,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    placeholder = painterResource(R.drawable.person_placeholder),
-                    error = painterResource(R.drawable.person_placeholder),
+                    placeholder = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
+                    error = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
                     modifier = Modifier
                         .padding(vertical = 16.dp)
                         .size(128.dp)
@@ -385,7 +384,7 @@ fun ProfileUnchangeableItemsGroup(
     ) {
         ProfileItem(
             title = "Никнейм",
-            content = username,
+            content = "@$username",
             isChangeable = false,
             onClick = { onClick(username) }
         )

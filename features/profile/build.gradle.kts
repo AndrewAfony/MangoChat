@@ -14,6 +14,8 @@ dependencies {
     implementation(projects.domain)
     api(projects.features.profileApi)
 
+    implementation(libs.compose.shimmer)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.ui.tooling)

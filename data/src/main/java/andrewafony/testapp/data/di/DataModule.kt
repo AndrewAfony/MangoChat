@@ -4,6 +4,7 @@ import andrewafony.testapp.data.utils.ImageHandler
 import andrewafony.testapp.data.utils.TokenManager
 import andrewafony.testapp.data.repository.AuthRepositoryImpl
 import andrewafony.testapp.data.repository.ChatRepositoryImpl
+import andrewafony.testapp.data.repository.TestUserRepository
 import andrewafony.testapp.data.repository.UserRepositoryImpl
 import andrewafony.testapp.domain.repository.AuthRepository
 import andrewafony.testapp.domain.repository.ChatRepository
@@ -26,4 +27,5 @@ val dataModule = module {
     single { TokenManager(androidContext()) }
 
     factory { ImageHandler(androidContext()) }
+
 }

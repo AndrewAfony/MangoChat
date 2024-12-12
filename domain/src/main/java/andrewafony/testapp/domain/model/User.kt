@@ -18,7 +18,7 @@ data class User(
     companion object {
         fun empty() = User(
             name = "Andrew Afanasiev",
-            username = "@andrew_afony",
+            username = "andrew_afony",
             image = Uri.EMPTY,
             status = "Online",
             phone = "+7 (952) 773-56-92",
