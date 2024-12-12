@@ -1,6 +1,6 @@
 package andrewafony.testapp.profile
 
-import andrewafony.testapp.designsystem.restartableStateIn
+import andrewafony.testapp.common.utils.restartableStateIn
 import andrewafony.testapp.domain.model.Result
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.domain.repository.UserField
@@ -8,15 +8,8 @@ import andrewafony.testapp.domain.repository.UserRepository
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

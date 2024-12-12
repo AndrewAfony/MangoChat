@@ -1,13 +1,11 @@
-package andrewafony.testapp.designsystem
+package andrewafony.testapp.common.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun ComposableLifecycle(
@@ -24,6 +22,3 @@ fun ComposableLifecycle(
         }
     }
 }
-
-@Composable
-fun Modifier.shimmer(show: Boolean) = this then Modifier.apply { if (show) shimmer() }

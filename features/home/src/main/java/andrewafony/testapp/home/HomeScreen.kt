@@ -1,6 +1,6 @@
 package andrewafony.testapp.home
 
-import andrewafony.testapp.designsystem.SetWindowSoftInputMode
+import andrewafony.testapp.common.utils.SetWindowSoftInputMode
 import andrewafony.testapp.domain.model.Chat
 import andrewafony.testapp.home.stories.HomeScreenStories
 import android.view.WindowManager

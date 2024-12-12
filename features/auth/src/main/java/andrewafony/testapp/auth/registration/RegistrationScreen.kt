@@ -3,8 +3,7 @@ package andrewafony.testapp.auth.registration
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
-import andrewafony.testapp.designsystem.toast
-import android.util.Log
+import andrewafony.testapp.common.utils.toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

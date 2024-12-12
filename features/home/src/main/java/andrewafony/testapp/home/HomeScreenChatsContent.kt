@@ -27,13 +27,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun HomeScreenChats(
     modifier: Modifier = Modifier,
     chatList: List<Chat>,
     chatsListState: LazyListState,
-    navigateToChat: (String) -> Unit
+    navigateToChat: (String) -> Unit,
 ) {
     LazyColumn(
         state = chatsListState,
@@ -46,7 +48,7 @@ fun HomeScreenChats(
                 name = item.name,
                 message = item.lastMessage ?: "",
                 newMessages = item.newMessages,
-                lastMessageTime = item.lastMessageTime,
+                lastMessageTime = toChatDate(item.lastMessageDate, item.lastMessageTime),
                 onChatClick = navigateToChat
             )
         }
@@ -137,5 +139,24 @@ private fun HomeScreenChatsPrev() {
                 onChatClick = {}
             )
         }
+    }
+}
+
+private fun toChatDate(date: LocalDate, time: LocalTime) : String {
+
+    val currentDate = LocalDate.now()
+
+    return if (date.dayOfYear == currentDate.dayOfYear) {
+        val minutes = if (time.minute < 10) "0${time.minute}" else time.minute
+        val hour = if (time.hour < 10) "0${time.hour}" else time.hour
+        "$hour:$minutes"
+    } else if (date.year == currentDate.year) {
+        val day = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth
+        val month = if (date.monthValue < 10) "0${date.monthValue}" else date.monthValue
+        "$month.$day"
+    } else {
+        val day = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth
+        val month = if (date.monthValue < 10) "0${date.monthValue}" else date.monthValue
+        "${date.year}.$month.$day"
     }
 }

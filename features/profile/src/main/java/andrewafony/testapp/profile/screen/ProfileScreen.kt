@@ -1,7 +1,7 @@
 package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
-import andrewafony.testapp.designsystem.toast
+import andrewafony.testapp.common.utils.toast
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.profile.ProfileState
 import andrewafony.testapp.profile.ProfileViewModel

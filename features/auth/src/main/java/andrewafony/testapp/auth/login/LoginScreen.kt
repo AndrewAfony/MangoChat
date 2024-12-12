@@ -1,11 +1,10 @@
 package andrewafony.testapp.auth.login
 
-import andrewafony.testapp.designsystem.SetWindowSoftInputMode
+import andrewafony.testapp.common.utils.SetWindowSoftInputMode
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
-import andrewafony.testapp.designsystem.toast
-import android.util.Log
+import andrewafony.testapp.common.utils.toast
 import android.view.WindowManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntOffset

@@ -1,4 +1,4 @@
-package andrewafony.testapp.data.utils
+package andrewafony.testapp.common.utils
 
 import java.time.LocalDate
 

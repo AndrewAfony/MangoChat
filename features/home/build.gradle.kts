@@ -11,6 +11,7 @@ android {
 dependencies {
 
     implementation(projects.domain)
+    implementation(projects.core.common)
 
     implementation(projects.core.designsystem)
     api(projects.features.homeApi)

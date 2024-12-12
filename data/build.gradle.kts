@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.domain)
 
     implementation(projects.core.analytics)
+    implementation(projects.core.common)
 
     // ==== Retrofit ====
     implementation(libs.retrofit)

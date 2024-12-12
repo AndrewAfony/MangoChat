@@ -13,6 +13,8 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.features.homeApi)
 
+    implementation(projects.core.common)
+
     implementation(projects.domain)
 
     api(projects.features.authApi)

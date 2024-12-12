@@ -1,4 +1,4 @@
-package andrewafony.testapp.designsystem
+package andrewafony.testapp.common.utils
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

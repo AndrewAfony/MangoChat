@@ -4,10 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "andrewafony.testapp.analytics"
+    namespace = "andrewafony.testapp.common"
+
 }
 
 dependencies {
+    implementation(libs.androidx.material3.android)
 
-    api(libs.timber)
 }

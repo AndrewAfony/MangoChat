@@ -1,14 +1,12 @@
 package andrewafony.testapp.data.remote.model.response
 
+import andrewafony.testapp.common.utils.toLocalDate
+import andrewafony.testapp.common.utils.toZodiac
 import andrewafony.testapp.data.local.entities.UserEntity
-import andrewafony.testapp.data.utils.toLocalDate
-import andrewafony.testapp.data.utils.toZodiac
 import andrewafony.testapp.domain.model.User
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
 
 @Serializable
 data class ProfileData(

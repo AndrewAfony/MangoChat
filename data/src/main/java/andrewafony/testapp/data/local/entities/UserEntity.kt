@@ -1,6 +1,6 @@
 package andrewafony.testapp.data.local.entities
 
-import andrewafony.testapp.data.utils.toZodiac
+import andrewafony.testapp.common.utils.toZodiac
 import andrewafony.testapp.domain.model.User
 import android.net.Uri
 import androidx.room.Entity
