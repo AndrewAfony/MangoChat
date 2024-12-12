@@ -134,8 +134,6 @@ fun ProfileScreenContent(
 
     var editImageButtonOffset = remember { Offset(0f, 0f) }
 
-    Log.d("MyHelper", "bottom: $isBirthdayBottomSheet")
-
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent()
@@ -189,9 +187,6 @@ fun ProfileScreenContent(
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.person_placeholder),
                     error = painterResource(R.drawable.person_placeholder),
-                    onError = {
-                        Log.d("MyHelper", "imageError: ${it.result.throwable}")
-                    },
                     modifier = Modifier
                         .padding(vertical = 16.dp)
                         .size(128.dp)

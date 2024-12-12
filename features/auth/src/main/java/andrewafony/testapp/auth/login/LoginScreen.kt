@@ -138,7 +138,6 @@ fun LoginScreenContent(
             clearState()
         }
         if (authState is AuthState.SignIn) {
-            Log.d("MyHelper", "nav to home")
             navigateToHome()
         }
 

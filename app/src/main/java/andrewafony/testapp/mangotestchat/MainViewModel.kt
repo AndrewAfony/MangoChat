@@ -10,6 +10,7 @@ class MainViewModel(
 ) : ViewModel() {
 
     fun isLogged(): Boolean = runBlocking {
-        tokenManager.accessToken.first().isNotBlank() && tokenManager.refreshToken.first().isNotBlank()
+        tokenManager.accessToken.first().isNotBlank() &&
+        tokenManager.refreshToken.first().isNotBlank()
     }
 }

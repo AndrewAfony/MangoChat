@@ -39,6 +39,7 @@ dependencies {
 
     implementation(projects.core.featureApi)
     implementation(projects.core.designsystem)
+    implementation(projects.core.analytics)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

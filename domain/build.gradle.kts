@@ -5,7 +5,6 @@ plugins {
 
 android {
     namespace = "andrewafony.testapp.domain"
-
 }
 
 dependencies {

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class UserRepositoryImpl(
     private val userDao: UserDao,
@@ -42,7 +43,7 @@ class UserRepositoryImpl(
                 userDao.saveUserInfo(response.asEntity())
                 emit(Result.Success(true))
             } catch (e: Exception) {
-                Log.d("MyHelper", "userInfo error: ${e.localizedMessage}")
+                Timber.e(e)
                 emit(Result.Error(e.localizedMessage ?: "Unknown error"))
             }
         }
@@ -55,9 +56,14 @@ class UserRepositoryImpl(
                 userDao.updateUserName(field.name)
                 launch {
                     try {
-                        mainService.updateUserInfo(UserRequest(name = field.name, username = user.username))
+                        mainService.updateUserInfo(
+                            UserRequest(
+                                name = field.name,
+                                username = user.username
+                            )
+                        )
                     } catch (e: Exception) {
-                        Log.d("MyHelper", "updateUserInfoError: ${e.localizedMessage}")
+                        Timber.e(e)
                     }
                 }
             }
@@ -66,13 +72,15 @@ class UserRepositoryImpl(
                 userDao.updateUserBirthday(field.birthday)
                 launch {
                     try {
-                        mainService.updateUserInfo(UserRequest(
-                            name = user.name,
-                            username = user.username,
-                            birthday = field.birthday.toRequestDate()
-                        ))
+                        mainService.updateUserInfo(
+                            UserRequest(
+                                name = user.name,
+                                username = user.username,
+                                birthday = field.birthday.toRequestDate()
+                            )
+                        )
                     } catch (e: Exception) {
-                        Log.d("MyHelper", "updateUserInfoError: ${e.localizedMessage}")
+                        Timber.e(e)
                     }
                 }
             }
@@ -81,13 +89,15 @@ class UserRepositoryImpl(
                 userDao.updateUserCity(field.city)
                 launch {
                     try {
-                        mainService.updateUserInfo(UserRequest(
-                            name = user.name,
-                            username = user.username,
-                            city = field.city)
+                        mainService.updateUserInfo(
+                            UserRequest(
+                                name = user.name,
+                                username = user.username,
+                                city = field.city
+                            )
                         )
                     } catch (e: Exception) {
-                        Log.d("MyHelper", "updateUserInfoError: ${e.localizedMessage}")
+                        Timber.e(e)
                     }
                 }
             }
@@ -107,7 +117,7 @@ class UserRepositoryImpl(
                             )
                         }
                     } catch (e: Exception) {
-                        Log.d("MyHelper", "updateUserInfoError: ${e.localizedMessage}")
+                        Timber.e(e)
                     }
                 }
             }

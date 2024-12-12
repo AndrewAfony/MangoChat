@@ -21,12 +21,14 @@ dependencies {
 
     implementation(projects.domain)
 
+    implementation(projects.core.analytics)
+
     // ==== Retrofit ====
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.okhttp)
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation (libs.logging.interceptor)
 
     // ==== Room ====
     implementation(libs.androidx.room.runtime)
@@ -34,7 +36,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     // ==== DataStore ====
-    implementation ("androidx.datastore:datastore-preferences:1.1.1")
+    implementation (libs.androidx.datastore.preferences)
 
     // ==== Koin ====
     implementation (libs.koin.androidx.compose)

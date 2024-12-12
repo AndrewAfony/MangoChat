@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import androidx.core.net.toUri
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -33,7 +34,7 @@ class ImageHandler(
 
             file.toUri()
         } catch (e: Exception) {
-            Log.d("MyHelper", "saveImageLocally: ${e.localizedMessage}")
+            Timber.e(e)
             null
         }
     }
@@ -53,7 +54,7 @@ class ImageHandler(
 
             Base64.encodeToString(imageBytes, Base64.DEFAULT)
         } catch (e: Exception) {
-            Log.d("MyHelper", "encode image error: ${e.localizedMessage} ")
+            Timber.e(e)
             null
         }
     }

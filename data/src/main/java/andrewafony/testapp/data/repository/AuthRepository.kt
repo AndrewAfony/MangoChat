@@ -11,6 +11,7 @@ import andrewafony.testapp.domain.repository.AuthRepository
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class AuthRepositoryImpl(
     private val authService: AuthService,
@@ -22,7 +23,7 @@ class AuthRepositoryImpl(
             val response = authService.auth(Auth(phone))
             response.isSuccessful && response.body()?.isSuccess ?: false
         } catch (e: Exception) {
-            Log.d("MyHelper", "sendAuthCode: ${e.localizedMessage}")
+            Timber.e(e)
             false
         }
     }
@@ -37,7 +38,7 @@ class AuthRepositoryImpl(
                 }
                 Result.Success(response.isUserExists ?: false)
             } catch (e: Exception) {
-                Log.d("MyHelper", "checkAuthCode: ${e.localizedMessage}")
+                Timber.e(e)
                 Result.Error(e.localizedMessage ?: "Unknown error")
             }
         }
@@ -52,7 +53,7 @@ class AuthRepositoryImpl(
                 }
                 Result.Success(response.isUserExists ?: false)
             } catch (e: Exception) {
-                Log.d("MyHelper", "register: ${e.localizedMessage}")
+                Timber.e(e)
                 Result.Error(e.localizedMessage ?: "Unknown error")
             }
         }
