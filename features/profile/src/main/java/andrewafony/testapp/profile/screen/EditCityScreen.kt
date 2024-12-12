@@ -33,11 +33,12 @@ fun EditCityScreen(
     navigateBack: () -> Unit
 ) {
 
-    val user by viewModel.user.collectAsStateWithLifecycle()
+    val profileState by viewModel.userState.collectAsStateWithLifecycle()
+    val city = (profileState as ProfileState.Success).user.city
 
     EditCityScreenContent(
         modifier = modifier,
-        city = user.city,
+        city = city,
         updateCity = viewModel::updateCity,
         navigateBack = navigateBack
     )

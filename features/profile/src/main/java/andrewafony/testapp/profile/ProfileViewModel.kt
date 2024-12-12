@@ -24,19 +24,13 @@ class ProfileViewModel(
     private val userRepository: UserRepository,
 ) : ViewModel() {
 
-    val user: StateFlow<User> = userRepository.user()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = User.empty()
-        )
-
-    val profileState = userRepository.userInfo()
+    val userState = userRepository.user()
         .map { result ->
-            if (result is Result.Success)
-                ProfileState.Success
-            else
+            if (result is Result.Success) {
+                ProfileState.Success(result.data)
+            } else {
                 ProfileState.Error
+            }
         }
         .restartableStateIn(
             scope = viewModelScope,
@@ -60,7 +54,9 @@ class ProfileViewModel(
 
     fun updateName(name: String) {
         viewModelScope.launch {
-            userRepository.updateUserInfo(UserField.Name(name))
+            if (name.isNotBlank()) {
+                userRepository.updateUserInfo(UserField.Name(name))
+            }
         }
     }
 
@@ -79,5 +75,5 @@ sealed interface ProfileState {
 
     data object Error : ProfileState
 
-    data object Success : ProfileState
+    data class Success(val user: User) : ProfileState
 }

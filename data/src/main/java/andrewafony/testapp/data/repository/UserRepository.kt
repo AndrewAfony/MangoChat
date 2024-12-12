@@ -18,9 +18,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -31,23 +40,28 @@ class UserRepositoryImpl(
     private val imageHandler: ImageHandler,
 ) : UserRepository {
 
-    override fun user(): Flow<User> = userDao.currentUser()
-        .map(UserEntity::asUser)
+    override fun user(): Flow<Result<User>> = flow {
 
-    override fun userInfo(): Flow<Result<Boolean>> = flow {
-        if (userDao.exists()) {
-            emit(Result.Success(true))
+        val user = userDao.currentUser().firstOrNull()
+
+        if (user != null) {
+            emit(Result.Success(user.asUser()))
         } else {
             try {
                 val response = mainService.userInfo()
                 userDao.saveUserInfo(response.asEntity())
-                emit(Result.Success(true))
             } catch (e: Exception) {
                 Timber.e(e)
                 emit(Result.Error(e.localizedMessage ?: "Unknown error"))
             }
         }
-    }.flowOn(Dispatchers.IO)
+
+        val res: Flow<Result<User>> =
+            userDao.currentUser()
+                .filterNotNull()
+                .map { Result.Success(it.asUser()) }
+        emitAll(res)
+    }
 
     override suspend fun updateUserInfo(field: UserField): Unit = withContext(Dispatchers.IO) {
         val user = userDao.userInfo()

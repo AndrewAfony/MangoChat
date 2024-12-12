@@ -37,11 +37,12 @@ fun EditNameScreen(
     navigateBack: () -> Unit
 ) {
 
-    val user by viewModel.user.collectAsStateWithLifecycle()
+    val profileState by viewModel.userState.collectAsStateWithLifecycle()
+    val name = (profileState as ProfileState.Success).user.name
 
     EditNameScreenContent(
         modifier = modifier,
-        name = user.name,
+        name = name,
         updateName = viewModel::updateName,
         navigateBack = navigateBack
     )

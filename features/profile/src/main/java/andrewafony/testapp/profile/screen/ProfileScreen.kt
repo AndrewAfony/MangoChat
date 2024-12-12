@@ -8,9 +8,7 @@ import andrewafony.testapp.profile.ProfileViewModel
 import andrewafony.testapp.profile.R
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
 import andrewafony.testapp.profile.screen.components.ProfileItem
-import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -32,18 +30,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,9 +70,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import coil3.toCoilUri
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
@@ -91,15 +83,14 @@ fun ProfileScreen(
     navigateBack: () -> Unit,
 ) {
 
-    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    val profileState by viewModel.userState.collectAsStateWithLifecycle()
 
     ProfileScreenContent(
         modifier = modifier,
-        userState = viewModel.user,
         profileState = profileState,
         updateBirthday = viewModel::updateBirthday,
         updateImage = viewModel::updateImage,
-        retry = viewModel.profileState::restart,
+        retry = viewModel.userState::restart,
         navigateToNameEdit = navigateToNameEdit,
         navigateToCityEdit = navigateToCityEdit,
         navigateBack = navigateBack
@@ -111,7 +102,6 @@ fun ProfileScreen(
 fun ProfileScreenContent(
     modifier: Modifier = Modifier,
     profileState: ProfileState,
-    userState: StateFlow<User>,
     updateImage: (Uri?) -> Unit,
     updateBirthday: (LocalDate) -> Unit,
     retry: () -> Unit,
@@ -179,10 +169,8 @@ fun ProfileScreenContent(
 
             is ProfileState.Success -> {
 
-                val user by userState.collectAsStateWithLifecycle()
-
                 AsyncImage(
-                    model = user.image,
+                    model = profileState.user.image,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.person_placeholder),
@@ -249,8 +237,8 @@ fun ProfileScreenContent(
                 )
 
                 ProfileUnchangeableItemsGroup(
-                    username = user.username,
-                    phone = user.phone,
+                    username = profileState.user.username,
+                    phone = profileState.user.phone,
                     onClick = {
                         clipboardManager.setText(AnnotatedString(it))
                         context.toast("Copied")
@@ -258,10 +246,10 @@ fun ProfileScreenContent(
                 )
 
                 ProfileScreenItems(
-                    name = user.name,
-                    birthday = user.birthday,
-                    city = user.city,
-                    zodiac = user.zodiac,
+                    name = profileState.user.name,
+                    birthday = profileState.user.birthday,
+                    city = profileState.user.city,
+                    zodiac = profileState.user.zodiac,
                     onNameChange = navigateToNameEdit,
                     onCityChange = navigateToCityEdit,
                     onBirthdayChange = { isBirthdayBottomSheet = true }
@@ -273,7 +261,7 @@ fun ProfileScreenContent(
 
                 if (isBirthdayBottomSheet) {
                     BirthdayEditBottomSheet(
-                        birthday = user.birthday,
+                        birthday = profileState.user.birthday,
                         sheetState = birthdayBottomSheetState,
                         updateBirthday = updateBirthday,
                         onDismiss = {
@@ -420,8 +408,7 @@ private fun ProfileScreenPrev() {
             navigateToNameEdit = {},
             navigateBack = {},
             retry = {},
-            userState = MutableStateFlow(User.empty()),
-            profileState = ProfileState.Success,
+            profileState = ProfileState.Success(User.empty()),
             updateImage = {},
             updateBirthday = {}
         )
