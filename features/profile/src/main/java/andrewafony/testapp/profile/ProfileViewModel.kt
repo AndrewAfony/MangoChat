@@ -67,6 +67,12 @@ class ProfileViewModel(
             }
         }
     }
+
+    fun updateAbout(about: String) {
+        viewModelScope.launch {
+            userRepository.updateUserInfo(UserField.About(about))
+        }
+    }
 }
 
 sealed interface ProfileState {

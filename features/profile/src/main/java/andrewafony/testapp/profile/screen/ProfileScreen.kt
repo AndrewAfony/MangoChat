@@ -89,6 +89,7 @@ fun ProfileScreen(
         profileState = profileState,
         updateBirthday = viewModel::updateBirthday,
         updateImage = viewModel::updateImage,
+        updateAbout = viewModel::updateAbout,
         retry = viewModel.userState::restart,
         navigateToNameEdit = navigateToNameEdit,
         navigateToCityEdit = navigateToCityEdit,
@@ -103,6 +104,7 @@ fun ProfileScreenContent(
     profileState: ProfileState,
     updateImage: (Uri?) -> Unit,
     updateBirthday: (LocalDate) -> Unit,
+    updateAbout: (String) -> Unit,
     retry: () -> Unit,
     navigateToNameEdit: () -> Unit,
     navigateToCityEdit: () -> Unit,
@@ -255,7 +257,9 @@ fun ProfileScreenContent(
                 )
 
                 ProfileAboutItem(
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    prevAbout = profileState.user.about,
+                    updateAbout = updateAbout
                 )
 
                 if (isBirthdayBottomSheet) {
@@ -407,6 +411,7 @@ private fun ProfileScreenPrev() {
             navigateToNameEdit = {},
             navigateBack = {},
             retry = {},
+            updateAbout = {},
             profileState = ProfileState.Success(User.empty()),
             updateImage = {},
             updateBirthday = {}

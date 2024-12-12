@@ -26,4 +26,7 @@ sealed interface UserField {
 
     @JvmInline
     value class Image(val image: Uri) : UserField
+
+    @JvmInline
+    value class About(val about: String) : UserField
 }

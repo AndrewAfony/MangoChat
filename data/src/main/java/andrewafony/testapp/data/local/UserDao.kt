@@ -33,6 +33,9 @@ interface UserDao {
     @Query("UPDATE userentity SET avatar=:image WHERE id = :userId")
     suspend fun updateUserImage(image: Uri?, userId: Int = 0)
 
+    @Query("UPDATE userentity SET status=:about WHERE id = :userId")
+    suspend fun updateUserAbout(about: String, userId: Int = 0)
+
     @Query("SELECT EXISTS(SELECT * FROM userentity WHERE id = :userId)")
     suspend fun exists(userId: Int = 0): Boolean
 }

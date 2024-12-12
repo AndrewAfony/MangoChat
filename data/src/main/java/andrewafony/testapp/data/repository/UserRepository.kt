@@ -135,6 +135,23 @@ class UserRepositoryImpl(
                     }
                 }
             }
+
+            is UserField.About -> {
+                userDao.updateUserAbout(field.about)
+                launch {
+                    try {
+                        mainService.updateUserInfo(
+                            UserRequest(
+                                name = user.name,
+                                username = user.username,
+                                status = field.about
+                            )
+                        )
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
+                }
+            }
         }
     }
 }
