@@ -4,8 +4,6 @@ import andrewafony.testapp.common.utils.toLocalDate
 import andrewafony.testapp.common.utils.toZodiac
 import andrewafony.testapp.data.local.entities.UserEntity
 import andrewafony.testapp.domain.DatabaseMapper
-import andrewafony.testapp.domain.model.User
-import android.net.Uri
 import androidx.core.net.toUri
 import kotlinx.serialization.Serializable
 
