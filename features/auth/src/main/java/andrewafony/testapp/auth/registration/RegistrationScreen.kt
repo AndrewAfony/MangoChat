@@ -1,9 +1,9 @@
 package andrewafony.testapp.auth.registration
 
+import andrewafony.testapp.common.utils.toast
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
-import andrewafony.testapp.common.utils.toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,43 +47,44 @@ fun RegistrationScreen(
     navigateToHome: () -> Unit,
 ) {
 
-    val regState by viewModel.regState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    val regState by viewModel.state.collectAsStateWithLifecycle()
 
     RegistrationScreenContent(
         modifier = modifier,
         number = number,
+        updateName = viewModel::updateName,
+        updateUsername = viewModel::updateUsername,
         regState = regState,
         register = { viewModel.register(phone = number) },
-        updateUiState = viewModel::updateUiState,
         navigateBack = navigateBack,
-        navigateToHome = navigateToHome
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when(event) {
+                is UiEvent.Error -> context.toast("Something went wrong")
+                is UiEvent.NavigateToHome -> navigateToHome()
+            }
+        }
+    }
 }
 
 @Composable
 fun RegistrationScreenContent(
     modifier: Modifier = Modifier,
     number: String,
+    updateName: (String) -> Unit,
+    updateUsername : (String) -> Unit,
     regState: RegState,
     register: () -> Unit,
-    navigateToHome: () -> Unit,
-    updateUiState: (UiEvent) -> Unit,
     navigateBack: () -> Unit,
 ) {
 
-    val context = LocalContext.current
 
     val allowedCharsRegex = remember { Regex("^[A-Za-z0-9\\-_]*$") }
-    var isUsernameError by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(regState.isError, regState.isSuccess) {
-        if (regState.isError) {
-            context.toast("Something went wrong")
-        }
-        if (regState.isSuccess) {
-            navigateToHome()
-        }
-    }
+    var isUsernameError by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -112,7 +112,7 @@ fun RegistrationScreenContent(
             isSingleLine = true,
             placeholder = "Имя пользователя",
             keyboardCapitalization = KeyboardCapitalization.Words,
-            onEdit = { updateUiState(UiEvent.Name(it)) }
+            onEdit = updateName
         )
         MangoTextField(
             field = regState.username,
@@ -121,7 +121,7 @@ fun RegistrationScreenContent(
             isSingleLine = true,
             keyboardType = KeyboardType.Ascii,
             onEdit = {
-                updateUiState(UiEvent.Username(it))
+                updateUsername(it)
                 isUsernameError = !it.matches(allowedCharsRegex)
             }
         )
@@ -143,9 +143,7 @@ fun RegistrationScreenContent(
             text = "Войти",
             isEnabled = !isUsernameError,
             isLoader = regState.isLoading,
-            onClick = {
-                if (!regState.isLoading) register()
-            }
+            onClick = { if (!regState.isLoading) register() }
         )
     }
 
@@ -175,8 +173,8 @@ private fun LoginScreenPrev() {
                 number = "+7 9991342342",
                 regState = RegState(),
                 register = {},
-                updateUiState = {},
-                navigateToHome = {},
+                updateUsername = {},
+                updateName = {},
             )
         }
     }

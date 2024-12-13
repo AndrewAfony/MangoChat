@@ -34,6 +34,7 @@ uiAndroid = "1.7.5"
 uiTooling = "1.7.5"
 uiToolingPreviewAndroidVersion = "1.7.5"
 secrets = "2.0.1"
+lifecycleViewmodelAndroid = "2.8.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

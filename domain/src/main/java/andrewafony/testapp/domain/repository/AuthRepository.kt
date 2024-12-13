@@ -1,12 +1,13 @@
 package andrewafony.testapp.domain.repository
 
 import andrewafony.testapp.domain.model.Result
+import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
 
-    suspend fun sendAuthCode(phone: String): Boolean
+    fun sendAuthCode(phone: String): Flow<Boolean>
 
-    suspend fun checkAuthCode(phone: String, code: String): Result<Boolean>
+    fun checkAuthCode(phone: String, code: String): Flow<Result<Boolean>>
 
-    suspend fun register(phone: String, name: String, username: String): Result<Boolean>
+    fun register(phone: String, name: String, username: String): Flow<Result<Boolean>>
 }
