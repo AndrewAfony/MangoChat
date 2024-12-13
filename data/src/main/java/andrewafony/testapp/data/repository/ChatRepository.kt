@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 
-class ChatRepositoryImpl: ChatRepository {
+class ChatRepositoryTest: ChatRepository {
 
     private val messages = mutableStateListOf<ChatMessage>()
     private var uniqueId = 3

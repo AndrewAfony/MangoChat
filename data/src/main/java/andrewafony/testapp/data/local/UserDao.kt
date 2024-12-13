@@ -13,29 +13,29 @@ import java.time.LocalDate
 interface UserDao {
 
     @Query("SELECT * FROM userentity WHERE id = 0")
-    fun currentUser() : Flow<UserEntity>
+    fun observeUser() : Flow<UserEntity>
 
-    @Query("SELECT * FROM userentity WHERE id = :userId")
-    suspend fun userInfo(userId: Int = 0): UserEntity
+    @Query("SELECT * FROM userentity WHERE id = 0")
+    suspend fun userInfo(): UserEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveUserInfo(userEntity: UserEntity)
 
-    @Query("UPDATE userentity SET city=:city WHERE id = :userId")
-    suspend fun updateUserCity(city: String, userId: Int = 0)
+    @Query("UPDATE userentity SET city=:city WHERE id = 0")
+    suspend fun updateUserCity(city: String)
 
-    @Query("UPDATE userentity SET name=:name WHERE id = :userId")
-    suspend fun updateUserName(name: String, userId: Int = 0)
+    @Query("UPDATE userentity SET name=:name WHERE id = 0")
+    suspend fun updateUserName(name: String)
 
-    @Query("UPDATE userentity SET birthday=:birthday WHERE id = :userId")
-    suspend fun updateUserBirthday(birthday: LocalDate, userId: Int = 0)
+    @Query("UPDATE userentity SET birthday=:birthday WHERE id = 0")
+    suspend fun updateUserBirthday(birthday: LocalDate)
 
-    @Query("UPDATE userentity SET avatar=:image WHERE id = :userId")
-    suspend fun updateUserImage(image: Uri?, userId: Int = 0)
+    @Query("UPDATE userentity SET avatar=:image WHERE id = 0")
+    suspend fun updateUserImage(image: Uri?)
 
-    @Query("UPDATE userentity SET status=:about WHERE id = :userId")
-    suspend fun updateUserAbout(about: String, userId: Int = 0)
+    @Query("UPDATE userentity SET status=:about WHERE id = 0")
+    suspend fun updateUserAbout(about: String)
 
-    @Query("SELECT EXISTS(SELECT * FROM userentity WHERE id = :userId)")
-    suspend fun exists(userId: Int = 0): Boolean
+    @Query("SELECT name FROM userentity WHERE id = 0")
+    suspend fun userName() : String
 }

@@ -6,15 +6,11 @@ import andrewafony.testapp.domain.repository.ChatRepository
 import andrewafony.testapp.domain.use_cases.GetUserInfoUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class ChatViewModel(
     getUserInfo: GetUserInfoUseCase,
@@ -36,9 +32,9 @@ class ChatViewModel(
             initialValue = MessagesState.Loading
         )
 
-    fun sendMessage() {
+    fun sendMessage(text: String) {
         viewModelScope.launch {
-            chatRepository.newMessage(text = "New message ${Random.nextInt()}")
+            chatRepository.newMessage(text = text)
         }
     }
 }

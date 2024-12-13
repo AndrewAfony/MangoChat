@@ -107,7 +107,7 @@ fun SettingsScreenContent(
                     placeholder = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
                     error = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
                     modifier = Modifier
-                        .shimmer()
+                        .padding(top = 48.dp + 16.dp)
                         .size(128.dp)
                         .clip(CircleShape)
                 )

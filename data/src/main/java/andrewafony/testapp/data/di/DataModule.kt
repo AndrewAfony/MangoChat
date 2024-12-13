@@ -3,9 +3,8 @@ package andrewafony.testapp.data.di
 import andrewafony.testapp.data.utils.ImageHandler
 import andrewafony.testapp.data.utils.TokenManager
 import andrewafony.testapp.data.repository.AuthRepositoryImpl
-import andrewafony.testapp.data.repository.ChatRepositoryImpl
+import andrewafony.testapp.data.repository.ChatRepositoryTest
 import andrewafony.testapp.data.repository.ChatsRepositoryImpl
-import andrewafony.testapp.data.repository.TestUserRepository
 import andrewafony.testapp.data.repository.UserRepositoryImpl
 import andrewafony.testapp.domain.repository.AuthRepository
 import andrewafony.testapp.domain.repository.ChatRepository
@@ -20,7 +19,7 @@ val dataModule = module {
 
     includes(networkModule, databaseModule)
 
-    single<ChatRepository> { ChatRepositoryImpl() }
+    single<ChatRepository> { ChatRepositoryTest() }
 
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
 

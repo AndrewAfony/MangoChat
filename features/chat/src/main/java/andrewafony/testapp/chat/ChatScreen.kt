@@ -2,9 +2,16 @@ package andrewafony.testapp.chat
 
 import andrewafony.testapp.domain.model.ChatMessage
 import andrewafony.testapp.domain.model.User
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -36,6 +44,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,7 +75,7 @@ fun ChatScreen(
     ChatScreenContent(
         modifier = modifier,
         messagesState = messagesState,
-        addItem = viewModel::sendMessage,
+        sendMessage = viewModel::sendMessage,
         user = user,
         navigateBack = navigateBack
     )
@@ -75,9 +86,11 @@ fun ChatScreenContent(
     modifier: Modifier = Modifier,
     messagesState: MessagesState,
     user: User,
-    addItem: () -> Unit,
+    sendMessage: (String) -> Unit,
     navigateBack: () -> Unit,
 ) {
+
+    var messageText by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -95,7 +108,13 @@ fun ChatScreenContent(
             userName = user.name
         )
         ChatScreenBottomBar(
-            onPlusClick = addItem
+            messageText = messageText,
+            onMessageInput = { messageText = it },
+            onMessageSend = {
+                sendMessage(it)
+                messageText = ""
+            },
+            onPlusClick = {}
         )
     }
 }
@@ -189,6 +208,7 @@ fun ChatMessages(
                 CircularProgressIndicator()
             }
         }
+
         is MessagesState.Success -> {
 
             LaunchedEffect(state.messages.size) {
@@ -197,7 +217,11 @@ fun ChatMessages(
 
             if (state.messages.isEmpty()) {
                 Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text(text = "Сообщений пока нет...", fontStyle = FontStyle.Italic, color = Color.Gray)
+                    Text(
+                        text = "Сообщений пока нет...",
+                        fontStyle = FontStyle.Italic,
+                        color = Color.Gray
+                    )
                 }
             } else {
                 LazyColumn(
@@ -233,7 +257,10 @@ fun ChatMessages(
 @Composable
 fun ChatScreenBottomBar(
     modifier: Modifier = Modifier,
+    messageText: String,
+    onMessageInput: (String) -> Unit,
     onPlusClick: () -> Unit,
+    onMessageSend: (String) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -257,19 +284,21 @@ fun ChatScreenBottomBar(
                 .clickable { onPlusClick() }
         )
         TextField(
-            value = "text",
-            onValueChange = { },
+            value = messageText,
+            onValueChange = onMessageInput,
             placeholder = {
-                Text(text = "New Chat", color = Color.Gray)
+                Text(
+                    text = "Сообщение",
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodySmall
+                )
             },
             textStyle = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
                 .fillMaxWidth(0.7f)
-                .height(70.dp)
                 .padding(vertical = 12.dp)
-                .clip(RoundedCornerShape(64.dp))
+                .clip(RoundedCornerShape(24.dp))
                 .background(Color(0xFFF5F5F5)),
-            singleLine = true,
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
@@ -277,10 +306,29 @@ fun ChatScreenBottomBar(
                 cursorColor = Color.Black
             )
         )
-        Icon(
-            imageVector = andrewafony.testapp.designsystem.icons.IconMicrophone,
-            contentDescription = null
-        )
+
+        AnimatedContent(
+            targetState = messageText.isBlank(),
+            transitionSpec = {
+                scaleIn() + fadeIn() togetherWith scaleOut() + fadeOut()
+            }
+        ) { isTextBlank ->
+            if (isTextBlank) {
+                Icon(
+                    imageVector = andrewafony.testapp.designsystem.icons.IconMicrophone,
+                    contentDescription = null
+                )
+            } else {
+                Icon(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { onMessageSend(messageText) },
+                    imageVector = Icons.AutoMirrored.Outlined.Send,
+                    contentDescription = null
+                )
+            }
+
+        }
     }
 }
 
@@ -291,11 +339,18 @@ private fun ChatScreenPrev() {
         Surface(color = Color.White) {
             ChatScreenContent(
                 messagesState = MessagesState.Success(
-                    messages = listOf(ChatMessage(id = 1, message = "Message content", user = "user", timestamp = "")),
+                    messages = listOf(
+                        ChatMessage(
+                            id = 1,
+                            message = "Message content",
+                            user = "user",
+                            timestamp = ""
+                        )
+                    ),
                 ),
                 user = User.empty(),
                 navigateBack = {},
-                addItem = {}
+                sendMessage = {}
             )
         }
     }
@@ -310,7 +365,7 @@ private fun ChatScreenPrevEmptyList() {
                 messagesState = MessagesState.Success(messages = emptyList()),
                 user = User.empty(),
                 navigateBack = {},
-                addItem = {}
+                sendMessage = {}
             )
         }
     }
