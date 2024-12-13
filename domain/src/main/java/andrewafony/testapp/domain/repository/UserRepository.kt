@@ -1,6 +1,5 @@
 package andrewafony.testapp.domain.repository
 
-import andrewafony.testapp.domain.model.Result
 import andrewafony.testapp.domain.model.User
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +8,8 @@ import java.time.LocalDate
 interface UserRepository {
 
     fun user() : Flow<Result<User>>
+
+    suspend fun userInfo() : User
 
     suspend fun updateUserInfo(field: UserField)
 }

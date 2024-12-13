@@ -17,10 +17,10 @@ interface AuthService {
     suspend fun auth(@Body auth: Auth): Response<SendAuthCodeResponse>
 
     @POST("api/v1/users/check-auth-code/")
-    suspend fun checkAuthCode(@Body authCode: AuthCode): CheckAuthCodeResponse
+    suspend fun checkAuthCode(@Body authCode: AuthCode): Response<CheckAuthCodeResponse>
 
     @POST("api/v1/users/register/")
-    suspend fun register(@Body registration: Registration): CheckAuthCodeResponse
+    suspend fun register(@Body registration: Registration): Response<CheckAuthCodeResponse>
 
     @POST("api/v1/users/refresh-token/")
     suspend fun refreshToken(

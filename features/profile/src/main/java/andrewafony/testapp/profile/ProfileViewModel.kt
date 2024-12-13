@@ -1,7 +1,6 @@
 package andrewafony.testapp.profile
 
 import andrewafony.testapp.common.utils.restartableStateIn
-import andrewafony.testapp.domain.model.Result
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.domain.repository.UserField
 import andrewafony.testapp.domain.repository.UserRepository
@@ -19,11 +18,10 @@ class ProfileViewModel(
 
     val userState = userRepository.user()
         .map { result ->
-            if (result is Result.Success) {
-                ProfileState.Success(result.data)
-            } else {
+            if (result.isSuccess) {
+                ProfileState.Success(result.getOrThrow())
+            } else
                 ProfileState.Error
-            }
         }
         .restartableStateIn(
             scope = viewModelScope,

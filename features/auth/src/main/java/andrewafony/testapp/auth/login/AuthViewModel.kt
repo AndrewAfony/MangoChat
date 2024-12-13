@@ -1,10 +1,8 @@
 package andrewafony.testapp.auth.login
 
 import andrewafony.testapp.common.base.StatefulViewModel
-import andrewafony.testapp.domain.model.Result
 import andrewafony.testapp.domain.repository.AuthRepository
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
@@ -16,16 +14,14 @@ class AuthViewModel(
         if (state.value.screenState is AuthState.EnterCode) {
             authRepository.checkAuthCode(fullNumber, state.value.code)
                 .onStart { updateState { copy(screenState = AuthState.Loading) } }
-                .onCompletion { backToPhone() }
                 .collect { result ->
-                    when (result) {
-                        is Result.Success -> {
-                            sendEvent(if (result.data) UiEvent.NavigateToHome else UiEvent.NavigateToReg)
+                    with(result) {
+                        onSuccess { isUserExists ->
+                            sendEvent(if (isUserExists) UiEvent.NavigateToHome else UiEvent.NavigateToReg)
                         }
-
-                        is Result.Error -> {
+                        onFailure { error ->
                             updateState { copy(screenState = AuthState.EnterCode) }
-                            sendEvent(UiEvent.Error(result.message))
+                            sendEvent(UiEvent.Error(error.message ?: "Unknown error"))
                         }
                     }
                 }
@@ -34,12 +30,15 @@ class AuthViewModel(
             authRepository.sendAuthCode(fullNumber)
                 .onStart { updateState { copy(screenState = AuthState.Loading) } }
                 .collect { result ->
-                    if (result) {
-                        updateState { copy(isCode = true, screenState = AuthState.EnterCode) }
-                        sendEvent(UiEvent.MoveFocus)
-                    } else {
-                        updateState { copy(screenState = AuthState.EnterPhone) }
-                        sendEvent(UiEvent.Error(""))
+                    with(result) {
+                        onSuccess {
+                            updateState { copy(isCode = true, screenState = AuthState.EnterCode) }
+                            sendEvent(UiEvent.MoveFocus)
+                        }
+                        onFailure {
+                            updateState { copy(screenState = AuthState.EnterPhone) }
+                            sendEvent(UiEvent.Error(it.message ?: "Unknown error"))
+                        }
                     }
                 }
         }

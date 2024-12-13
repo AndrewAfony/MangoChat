@@ -1,7 +1,6 @@
 package andrewafony.testapp.auth.registration
 
 import andrewafony.testapp.common.base.StatefulViewModel
-import andrewafony.testapp.domain.model.Result
 import andrewafony.testapp.domain.repository.AuthRepository
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.onStart
@@ -16,11 +15,11 @@ class RegistrationViewModel(
         authRepository.register(formattedPhone, state.value.name, state.value.username)
             .onStart { updateState { copy(isLoading = true) } }
             .collect { result ->
-                when (result) {
-                    is Result.Success -> sendEvent(UiEvent.NavigateToHome)
-                    is Result.Error -> {
+                with(result) {
+                    onSuccess { sendEvent(UiEvent.NavigateToHome) }
+                    onFailure {
                         updateState { copy(isLoading = false) }
-                        sendEvent(UiEvent.Error(""))
+                        sendEvent(UiEvent.Error(it.message ?: "Unknown error"))
                     }
                 }
             }

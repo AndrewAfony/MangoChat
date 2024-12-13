@@ -1,6 +1,5 @@
 package andrewafony.testapp.settings
 
-import andrewafony.testapp.domain.model.Result
 import andrewafony.testapp.domain.repository.UserRepository
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -16,11 +15,11 @@ class SettingsViewModel(
 
     val settingsState: StateFlow<SettingsState> = userRepository.user()
         .map { result ->
-            if (result is Result.Success) {
+            if (result.isSuccess) {
                 SettingsState.Success(
-                    image = result.data.image,
-                    name = result.data.name,
-                    username = result.data.username
+                    image = result.getOrThrow().image,
+                    name = result.getOrThrow().name,
+                    username = result.getOrThrow().username
                 )
             } else {
                 SettingsState.Error

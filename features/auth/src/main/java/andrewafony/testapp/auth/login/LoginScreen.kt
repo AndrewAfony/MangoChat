@@ -91,7 +91,10 @@ fun LoginScreen(
         viewModel.events.collectLatest { event ->
             when (event) {
                 is UiEvent.NavigateToReg -> navigateToRegistration(phoneState.getFullyFormattedPhoneNumber())
-                is UiEvent.NavigateToHome -> navigateToHome()
+                is UiEvent.NavigateToHome -> {
+                    navigateToHome()
+                    viewModel.backToPhone()
+                }
                 is UiEvent.Error -> context.toast("Error: ${event.message}")
                 is UiEvent.MoveFocus -> codeFocusRequester.requestFocus()
             }

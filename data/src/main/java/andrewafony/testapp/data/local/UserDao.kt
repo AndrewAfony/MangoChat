@@ -13,7 +13,7 @@ import java.time.LocalDate
 interface UserDao {
 
     @Query("SELECT * FROM userentity WHERE id = 0")
-    fun observeUser() : Flow<UserEntity>
+    fun observeUser() : Flow<UserEntity?>
 
     @Query("SELECT * FROM userentity WHERE id = 0")
     suspend fun userInfo(): UserEntity

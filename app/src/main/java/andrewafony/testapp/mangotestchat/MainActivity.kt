@@ -7,11 +7,20 @@ import andrewafony.testapp.settings_api.SettingsFeatureApi
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +33,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -75,14 +85,22 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         AnimatedVisibility(
                             visible = currentRoute in featureProvider.topRoutes,
-                            enter = slideInVertically(animationSpec = tween(500), initialOffsetY = { it }),
+                            enter = slideInVertically(
+                                animationSpec = tween(500),
+                                initialOffsetY = { it }),
                             exit = if (currentRoute == chatFeatureRoute) {
-                                slideOutHorizontally(animationSpec = tween(500), targetOffsetX = { -it } )
+                                slideOutHorizontally(
+                                    animationSpec = tween(500),
+                                    targetOffsetX = { -it })
                             } else
-                                slideOutVertically(animationSpec = tween(300), targetOffsetY = { it } )
+                                slideOutVertically(
+                                    animationSpec = tween(300),
+                                    targetOffsetY = { it })
                         ) {
                             BottomNavigation(
                                 currentRoute = currentRoute ?: "",
+                                homeRoute = homeFeatureRoute,
+                                settingsRoute = settingsFeatureRoute,
                                 navigateToHome = {
                                     navController.navigate(homeFeatureRoute) {
                                         popUpTo(homeFeatureRoute) { inclusive = true }
@@ -115,6 +133,8 @@ class MainActivity : ComponentActivity() {
 fun BottomNavigation(
     modifier: Modifier = Modifier,
     currentRoute: String,
+    homeRoute: String,
+    settingsRoute: String,
     navigateToHome: () -> Unit,
     navigateToSettings: () -> Unit,
 ) {
@@ -139,7 +159,7 @@ fun BottomNavigation(
         ) {
 
             NavigationBarItem(
-                selected = currentRoute == "home",
+                selected = currentRoute == homeRoute,
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                 ),
@@ -147,38 +167,66 @@ fun BottomNavigation(
                 icon = {
                     Icon(
                         imageVector = Icons.Outlined.Home,
-                        contentDescription = "",
+                        contentDescription = null,
                         modifier = Modifier
                             .size(32.dp)
                     )
                 }
             )
 
-            Row(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable { }
-                    .weight(2f)
-                    .background(Color.Black),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-                Spacer(modifier = Modifier.padding(4.dp))
-                Text(
-                    modifier = Modifier.padding(vertical = 10.dp),
-                    text = "New chat",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White
-                )
+            AnimatedContent(
+                modifier = Modifier.weight(2f),
+                targetState = currentRoute == homeRoute,
+                transitionSpec = {
+                    scaleIn(initialScale = 0.9f) + fadeIn() togetherWith scaleOut(
+                        targetScale = 0.9f
+                    ) + fadeOut()
+                }
+            ) { targetState ->
+
+                Row(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { }
+                        .background(Color.Black),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (targetState) {
+
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(
+                            modifier = Modifier.padding(vertical = 10.dp),
+                            text = "New chat",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.White
+                        )
+
+                    } else {
+
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(
+                            modifier = Modifier.padding(vertical = 10.dp),
+                            text = "Open menu",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.White
+                        )
+                    }
+                }
             }
 
             NavigationBarItem(
-                selected = currentRoute == "settings",
+                selected = currentRoute == settingsRoute,
                 onClick = navigateToSettings,
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
@@ -186,7 +234,7 @@ fun BottomNavigation(
                 icon = {
                     Icon(
                         imageVector = Icons.Outlined.Settings,
-                        contentDescription = "",
+                        contentDescription = null,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -202,6 +250,8 @@ private fun MainActivityPrev() {
         BottomNavigation(
             navigateToSettings = {},
             navigateToHome = {},
+            homeRoute = "home",
+            settingsRoute = "settings",
             currentRoute = "home"
         )
     }

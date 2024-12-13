@@ -1,6 +1,8 @@
 package andrewafony.testapp.data.local.entities
 
 import andrewafony.testapp.common.utils.toZodiac
+import andrewafony.testapp.domain.DataMapper
+import andrewafony.testapp.domain.DatabaseMapper
 import andrewafony.testapp.domain.model.User
 import android.net.Uri
 import androidx.room.Entity
@@ -20,36 +22,17 @@ data class UserEntity(
     val status: String?,
     val created: String?,
     val zodiac: String?,
-)
+): DataMapper<User> {
 
-/**
- * Get from database
- */
-fun UserEntity.asUser() = User(
-    name = name,
-    username = username,
-    image = avatar ?: Uri.EMPTY,
-    phone = phone,
-    status = last ?: "",
-    birthday = birthday,
-    city = city ?: "",
-    zodiac = birthday?.toZodiac() ?: "",
-    about = status ?: ""
-)
-
-/**
- * Save to database
- */
-fun User.asEntity() = UserEntity(
-    id = 0,
-    name = name,
-    username = username,
-    avatar = image,
-    birthday = birthday,
-    city = city,
-    last = status,
-    status = about,
-    phone = phone,
-    created = "",
-    zodiac = zodiac
-)
+    override fun toDomain(): User = User(
+        name = name,
+        username = username,
+        image = avatar ?: Uri.EMPTY,
+        phone = phone,
+        status = last ?: "",
+        birthday = birthday,
+        city = city ?: "",
+        zodiac = birthday?.toZodiac() ?: "",
+        about = status ?: ""
+    )
+}

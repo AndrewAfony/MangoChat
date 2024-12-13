@@ -14,6 +14,9 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
+
+private const val TIMEOUT_SECONDS: Long = 30
 
 internal val networkModule = module {
 
@@ -21,13 +24,24 @@ internal val networkModule = module {
 
     single<Authenticator> { MangoAuthenticator(get(), get()) }
 
-    single<HttpLoggingInterceptor> { HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY) }
+    single<HttpLoggingInterceptor> {
+        HttpLoggingInterceptor().setLevel(
+            if (BuildConfig.DEBUG)
+                HttpLoggingInterceptor.Level.BODY
+            else
+                HttpLoggingInterceptor.Level.NONE
+        )
+    }
 
     single<AuthService> {
         val logging: HttpLoggingInterceptor = get()
 
         val client = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .callTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()
@@ -48,6 +62,10 @@ internal val networkModule = module {
             .addInterceptor(logging)
             .addInterceptor(authInterceptor)
             .authenticator(authenticator)
+            .callTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()

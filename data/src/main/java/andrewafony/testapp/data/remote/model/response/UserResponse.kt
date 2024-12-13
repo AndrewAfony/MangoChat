@@ -1,12 +1,13 @@
 package andrewafony.testapp.data.remote.model.response
 
+import andrewafony.testapp.data.local.entities.UserEntity
+import andrewafony.testapp.domain.DatabaseMapper
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserResponse(
     val profile_data: ProfileData
-)
+) : DatabaseMapper<UserEntity> {
 
-fun UserResponse.asUser() = profile_data.asUser()
-
-fun UserResponse.asEntity() = profile_data.asEntity()
+    override fun toEntity(): UserEntity = profile_data.toEntity()
+}
