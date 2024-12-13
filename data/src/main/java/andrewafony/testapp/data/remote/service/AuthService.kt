@@ -2,6 +2,7 @@ package andrewafony.testapp.data.remote.service
 
 import andrewafony.testapp.data.remote.model.request.Auth
 import andrewafony.testapp.data.remote.model.request.AuthCode
+import andrewafony.testapp.data.remote.model.request.RefreshToken
 import andrewafony.testapp.data.remote.model.request.Registration
 import andrewafony.testapp.data.remote.model.response.CheckAuthCodeResponse
 import andrewafony.testapp.data.remote.model.response.SendAuthCodeResponse
@@ -22,5 +23,8 @@ interface AuthService {
     suspend fun register(@Body registration: Registration): CheckAuthCodeResponse
 
     @POST("api/v1/users/refresh-token/")
-    suspend fun refreshToken(@Header("Authorization") token: String): Response<CheckAuthCodeResponse>
+    suspend fun refreshToken(
+        @Header("Authorization") accessToken: String,
+        @Body refreshToken: RefreshToken
+    ): Response<CheckAuthCodeResponse>
 }

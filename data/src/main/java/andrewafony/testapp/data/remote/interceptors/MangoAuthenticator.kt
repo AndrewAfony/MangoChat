@@ -1,9 +1,9 @@
 package andrewafony.testapp.data.remote.interceptors
 
+import andrewafony.testapp.data.remote.model.request.RefreshToken
+import andrewafony.testapp.data.remote.service.AuthService
 import andrewafony.testapp.data.utils.Token
 import andrewafony.testapp.data.utils.TokenManager
-import andrewafony.testapp.data.remote.service.AuthService
-import android.util.Log
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
@@ -18,8 +18,12 @@ class MangoAuthenticator(
 
     override fun authenticate(route: Route?, response: Response): Request? {
         val token = runBlocking { tokenManager.refreshToken.first() }
+        val accessToken = runBlocking { tokenManager.accessToken.first() }
         return runBlocking {
-            val newToken = authService.refreshToken(token)
+            val newToken = authService.refreshToken(
+                accessToken = "Bearer $accessToken",
+                refreshToken = RefreshToken(token)
+            )
 
             newToken.body()?.let {
                 it.accessToken?.let { access -> tokenManager.saveToken(Token.Access(access)) }
