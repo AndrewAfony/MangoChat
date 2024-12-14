@@ -87,7 +87,7 @@ abstract class BaseRepository {
 
                 else -> {
                     val message = exception.localizedMessage ?: "Error Occurred!"
-                    Timber.e(message)
+                    Timber.e(exception)
                     emit(Result.failure(NetworkError.Unexpected(message)))
                 }
             }
