@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -153,7 +153,7 @@ fun RegistrationScreenContent(
         contentAlignment = Alignment.TopStart
     ) {
         Icon(
-            imageVector = Icons.Outlined.KeyboardArrowLeft,
+            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
             contentDescription = null,
             modifier = Modifier
                 .clip(CircleShape)

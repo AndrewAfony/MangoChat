@@ -1,10 +1,10 @@
 package andrewafony.testapp.auth.login
 
 import andrewafony.testapp.common.utils.SetWindowSoftInputMode
+import andrewafony.testapp.common.utils.toast
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
-import andrewafony.testapp.common.utils.toast
 import android.view.WindowManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntOffset
@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -205,7 +205,7 @@ fun LoginScreenContent(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Default.KeyboardArrowLeft, null)
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, null)
                 }
             }
             MangoButtonWithLoader(

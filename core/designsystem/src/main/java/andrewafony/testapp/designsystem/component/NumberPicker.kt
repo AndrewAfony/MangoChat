@@ -42,9 +42,9 @@ class PickerState {
 
 @Composable
 fun Picker(
+    modifier: Modifier = Modifier,
     items: List<String>,
     state: PickerState = rememberPickerState(),
-    modifier: Modifier = Modifier,
     startIndex: Int = 0,
     visibleItemsCount: Int = 3,
     textModifier: Modifier = Modifier,
