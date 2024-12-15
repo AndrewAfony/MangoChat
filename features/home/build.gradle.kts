@@ -10,13 +10,13 @@ android {
 
 dependencies {
 
-    implementation(projects.domain)
-    implementation(projects.core.common)
-
-    implementation(projects.core.designsystem)
     api(projects.features.homeApi)
 
+    implementation(projects.domain)
     implementation(projects.features.chatApi)
+
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)

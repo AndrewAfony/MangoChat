@@ -10,6 +10,7 @@ android {
 
 dependencies {
 
+    api(projects.features.settingsApi)
 
     implementation(projects.domain)
 
@@ -20,8 +21,6 @@ dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)
-
-    api(projects.features.settingsApi)
 
     // ==== Coil ====
     implementation(libs.coil.compose)

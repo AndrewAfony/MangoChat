@@ -10,9 +10,10 @@ android {
 
 dependencies {
 
+    api(projects.features.profileApi)
+
     implementation(projects.core.designsystem)
     implementation(projects.domain)
-    api(projects.features.profileApi)
     implementation(projects.core.common)
 
     implementation(libs.compose.shimmer)

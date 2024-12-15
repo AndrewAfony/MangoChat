@@ -10,14 +10,13 @@ android {
 
 dependencies {
 
-    implementation(projects.core.designsystem)
-    implementation(projects.features.homeApi)
-
-    implementation(projects.core.common)
+    api(projects.features.authApi)
 
     implementation(projects.domain)
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
 
-    api(projects.features.authApi)
+    implementation(projects.features.homeApi)
 
     implementation(libs.kotlinx.serialization.json)
 
