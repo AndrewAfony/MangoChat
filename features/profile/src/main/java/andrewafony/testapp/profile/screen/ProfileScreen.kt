@@ -1,8 +1,9 @@
 package andrewafony.testapp.profile.screen
 
-import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import andrewafony.testapp.common.utils.shimmerEffect
 import andrewafony.testapp.common.utils.toast
-import andrewafony.testapp.domain.model.User
+import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import andrewafony.testapp.profile.ProfileScreenState
 import andrewafony.testapp.profile.ProfileState
 import andrewafony.testapp.profile.ProfileViewModel
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
@@ -14,7 +15,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +30,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -82,7 +81,7 @@ fun ProfileScreen(
     navigateBack: () -> Unit,
 ) {
 
-    val profileState by viewModel.userState.collectAsStateWithLifecycle()
+    val profileState by viewModel.state.collectAsStateWithLifecycle()
 
     ProfileScreenContent(
         modifier = modifier,
@@ -90,7 +89,7 @@ fun ProfileScreen(
         updateBirthday = viewModel::updateBirthday,
         updateImage = viewModel::updateImage,
         updateAbout = viewModel::updateAbout,
-        retry = viewModel.userState::restart,
+        retry = viewModel.state::restart,
         navigateToNameEdit = navigateToNameEdit,
         navigateToCityEdit = navigateToCityEdit,
         navigateBack = navigateBack
@@ -143,139 +142,143 @@ fun ProfileScreenContent(
 
         ProfileScreenTopBar(navigateBack = navigateBack)
 
-        when (profileState) {
-            is ProfileState.Error -> {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Something went wrong",
-                        color = Color.Red,
-                        fontStyle = FontStyle.Italic
-                    )
-                    Spacer(modifier = Modifier.size(12.dp))
-                    Button(onClick = retry) {
-                        Text("Повторить")
+        if (profileState.screenState is ProfileScreenState.Error) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Something went wrong",
+                    color = Color.Red,
+                    fontStyle = FontStyle.Italic
+                )
+                Spacer(modifier = Modifier.size(12.dp))
+                Button(onClick = retry) {
+                    Text("Повторить")
+                }
+            }
+        } else {
+
+            val isLoading = profileState.screenState is ProfileScreenState.Loading
+
+            AsyncImage(
+                model = profileState.user?.image,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
+                error = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
+                modifier = Modifier
+                    .shimmerEffect(isLoading)
+                    .padding(vertical = 16.dp)
+                    .size(128.dp)
+                    .graphicsLayer {
+                        compositingStrategy = CompositingStrategy.Offscreen
                     }
-                }
-            }
-
-            is ProfileState.Loading -> {
-                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            is ProfileState.Success -> {
-
-                AsyncImage(
-                    model = profileState.user.image,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
-                    error = painterResource(andrewafony.testapp.designsystem.R.drawable.person_placeholder),
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .size(128.dp)
-                        .graphicsLayer {
-                            compositingStrategy = CompositingStrategy.Offscreen
-                        }
-                        .pointerInput(Unit) {
-                            detectTapGestures { tapOffset ->
-                                if (tapOffset.x > editImageButtonOffset.x && tapOffset.y > editImageButtonOffset.y) {
-                                    launcher.launch("image/*")
-                                }
+                    .pointerInput(Unit) {
+                        detectTapGestures { tapOffset ->
+                            if (tapOffset.x > editImageButtonOffset.x &&
+                                tapOffset.y > editImageButtonOffset.y &&
+                                !isLoading
+                            ) {
+                                launcher.launch("image/*")
                             }
                         }
-                        .drawWithCache {
-                            val dotSize = size.width / 8f
+                    }
+                    .drawWithCache {
+                        val dotSize = size.width / 8f
 
-                            editImageButtonOffset =
-                                Offset(size.width - dotSize * 2, size.height - dotSize * 2)
+                        editImageButtonOffset =
+                            Offset(size.width - dotSize * 2, size.height - dotSize * 2)
 
-                            val path = Path()
-                            path.addOval(
-                                Rect(
-                                    topLeft = Offset.Zero,
-                                    bottomRight = Offset(size.width, size.height)
+                        val path = Path()
+                        path.addOval(
+                            Rect(
+                                topLeft = Offset.Zero,
+                                bottomRight = Offset(size.width, size.height)
+                            )
+                        )
+                        onDrawWithContent {
+                            clipPath(path) {
+                                this@onDrawWithContent.drawContent()
+                            }
+                            drawCircle(
+                                Color.Black,
+                                radius = dotSize,
+                                center = Offset(
+                                    x = size.width - dotSize,
+                                    y = size.height - dotSize
+                                ),
+                                blendMode = BlendMode.Clear
+                            )
+                            drawCircle(
+                                color = primaryColor,
+                                radius = dotSize * 0.8f,
+                                center = Offset(
+                                    x = size.width - dotSize,
+                                    y = size.height - dotSize
                                 )
                             )
-                            onDrawWithContent {
-                                clipPath(path) {
-                                    this@onDrawWithContent.drawContent()
-                                }
-                                drawCircle(
-                                    Color.Black,
-                                    radius = dotSize,
-                                    center = Offset(
-                                        x = size.width - dotSize,
-                                        y = size.height - dotSize
-                                    ),
-                                    blendMode = BlendMode.Clear
-                                )
-                                drawCircle(
-                                    color = primaryColor,
-                                    radius = dotSize * 0.8f,
-                                    center = Offset(
-                                        x = size.width - dotSize,
-                                        y = size.height - dotSize
+                            translate(
+                                left = size.width - dotSize - iconEdit.intrinsicSize.width / 2 + 4.dp.toPx(),
+                                top = size.height - dotSize - iconEdit.intrinsicSize.height / 2 + 4.dp.toPx()
+                            ) {
+                                with(iconEdit) {
+                                    draw(
+                                        size = Size(16.dp.toPx(), 16.dp.toPx())
                                     )
-                                )
-                                translate(
-                                    left = size.width - dotSize - iconEdit.intrinsicSize.width / 2 + 4.dp.toPx(),
-                                    top = size.height - dotSize - iconEdit.intrinsicSize.height / 2 + 4.dp.toPx()
-                                ) {
-                                    with(iconEdit) {
-                                        draw(
-                                            size = Size(16.dp.toPx(), 16.dp.toPx())
-                                        )
-                                    }
                                 }
                             }
                         }
-                )
+                    }
+            )
 
-                ProfileUnchangeableItemsGroup(
-                    username = profileState.user.username,
-                    phone = profileState.user.phone,
-                    onClick = {
+            ProfileUnchangeableItemsGroup(
+                modifier = Modifier.shimmerEffect(isLoading),
+                username = profileState.user?.username ?: "",
+                phone = profileState.user?.phone ?: "",
+                onClick = {
+                    if (!isLoading) {
                         clipboardManager.setText(AnnotatedString(it))
                         context.toast("Copied")
                     }
-                )
+                }
+            )
 
-                ProfileScreenItems(
-                    name = profileState.user.name,
-                    birthday = profileState.user.birthday,
-                    city = profileState.user.city,
-                    zodiac = profileState.user.zodiac,
-                    onNameChange = navigateToNameEdit,
-                    onCityChange = navigateToCityEdit,
-                    onBirthdayChange = { isBirthdayBottomSheet = true }
-                )
+            ProfileScreenItems(
+                modifier = Modifier.shimmerEffect(isLoading),
+                name = profileState.user?.name ?: "",
+                birthday = profileState.user?.birthday,
+                city = profileState.user?.city ?: "",
+                zodiac = profileState.user?.zodiac ?: "",
+                isLoading = isLoading,
+                onNameChange = { if (!isLoading) navigateToNameEdit() },
+                onCityChange = { if (!isLoading) navigateToCityEdit() },
+                onBirthdayChange = { if (!isLoading) isBirthdayBottomSheet = true }
+            )
 
-                ProfileAboutItem(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    prevAbout = profileState.user.about,
-                    updateAbout = updateAbout
-                )
+            ProfileAboutItem(
+                modifier = Modifier
+                    .shimmerEffect(isLoading)
+                    .padding(horizontal = 16.dp),
+                prevAbout = profileState.user?.about ?: "",
+                isLoading = isLoading,
+                updateAbout = updateAbout
+            )
 
-                if (isBirthdayBottomSheet) {
-                    BirthdayEditBottomSheet(
-                        birthday = profileState.user.birthday,
-                        sheetState = birthdayBottomSheetState,
-                        updateBirthday = updateBirthday,
-                        onDismiss = {
-                            scope.launch { birthdayBottomSheetState.hide() }.invokeOnCompletion {
-                                if (!birthdayBottomSheetState.isVisible) {
-                                    isBirthdayBottomSheet = false
-                                }
+            if (isBirthdayBottomSheet) {
+                BirthdayEditBottomSheet(
+                    birthday = profileState.user?.birthday,
+                    sheetState = birthdayBottomSheetState,
+                    updateBirthday = updateBirthday,
+                    onDismiss = {
+                        scope.launch { birthdayBottomSheetState.hide() }.invokeOnCompletion {
+                            if (!birthdayBottomSheetState.isVisible) {
+                                isBirthdayBottomSheet = false
                             }
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }
@@ -310,6 +313,7 @@ fun ProfileScreenItems(
     city: String,
     birthday: LocalDate?,
     zodiac: String,
+    isLoading: Boolean,
     onNameChange: () -> Unit,
     onCityChange: () -> Unit,
     onBirthdayChange: () -> Unit,
@@ -342,29 +346,29 @@ fun ProfileScreenItems(
             .background(andrewafony.testapp.designsystem.theme.veryLightGray)
     ) {
         ProfileItem(
-            title = "Имя",
+            title = if (name.isBlank()) "" else "Имя",
             content = name,
             isChangeable = true,
             onClick = onNameChange
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
-            title = "Город",
-            content = city.ifBlank { "Не указан" },
+            title = if (city.isBlank()) "" else "Город",
+            content = city.ifBlank { if (!isLoading) "Не указан" else "" },
             isChangeable = true,
             onClick = onCityChange
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
-            title = "Дата рождения",
-            content = if (birthday != null) "$birthdayDay.$birthdayMonth.${birthday.year}" else "Не указано",
+            title = if (birthday == null) "" else "Дата рождения",
+            content = if (birthday != null) "$birthdayDay.$birthdayMonth.${birthday.year}" else { if (isLoading) "" else "Не указано"},
             isChangeable = true,
             onClick = onBirthdayChange
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
-            title = "Знак зодиака",
-            content = zodiac.ifBlank { "День рождения не указан" },
+            title = if (zodiac.isBlank()) "" else "Знак зодиака",
+            content = zodiac.ifBlank { if (isLoading) "" else "День рождения не указан" },
             isChangeable = false
         )
     }
@@ -387,14 +391,14 @@ fun ProfileUnchangeableItemsGroup(
             .background(andrewafony.testapp.designsystem.theme.veryLightGray)
     ) {
         ProfileItem(
-            title = "Никнейм",
-            content = "@$username",
+            title = if (username.isBlank()) "" else "Никнейм",
+            content = if (username.isBlank()) "" else "@$username",
             isChangeable = false,
             onClick = { onClick(username) }
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         ProfileItem(
-            title = "Номер телефона",
+            title = if (phone.isBlank()) "" else "Номер телефона",
             content = phone,
             isChangeable = false,
             onClick = { onClick(phone) }
@@ -412,7 +416,7 @@ private fun ProfileScreenPrev() {
             navigateBack = {},
             retry = {},
             updateAbout = {},
-            profileState = ProfileState.Success(User.empty()),
+            profileState = ProfileState(),
             updateImage = {},
             updateBirthday = {}
         )

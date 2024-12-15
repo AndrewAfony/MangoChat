@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 fun ProfileAboutItem(
     modifier: Modifier = Modifier,
     prevAbout: String,
+    isLoading: Boolean,
     updateAbout: (String) -> Unit,
 ) {
 
@@ -40,6 +41,7 @@ fun ProfileAboutItem(
         prevAbout = prevAbout,
         textValue = textValue,
         updateAbout = updateAbout,
+        isLoading = isLoading,
         onTextChanged = { textValue = it }
     )
 }
@@ -49,6 +51,7 @@ fun ProfileAboutItemContent(
     modifier: Modifier = Modifier,
     prevAbout: String,
     textValue: String,
+    isLoading: Boolean,
     updateAbout: (String) -> Unit,
     onTextChanged: (String) -> Unit
 ) {
@@ -69,9 +72,10 @@ fun ProfileAboutItemContent(
             onValueChange = {
                 onTextChanged(it.take(150))
             },
+            enabled = !isLoading,
             placeholder = {
                 Text(
-                    text = "Напишите немного о себе",
+                    text = if (isLoading) "" else "Напишите немного о себе",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.W300,
                     color = Color.Gray
@@ -111,6 +115,7 @@ private fun ProfileAboutItemPrev() {
             textValue = "",
             prevAbout = "Nice",
             updateAbout = {},
+            isLoading = false,
             onTextChanged = {}
         )
     }

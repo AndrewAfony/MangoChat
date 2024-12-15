@@ -1,5 +1,6 @@
 package andrewafony.testapp.profile
 
+import andrewafony.testapp.common.utils.RestartableStateFlow
 import andrewafony.testapp.common.utils.restartableStateIn
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.domain.repository.UserField
@@ -16,17 +17,17 @@ class ProfileViewModel(
     private val userRepository: UserRepository,
 ) : ViewModel() {
 
-    val userState = userRepository.user()
+    val state: RestartableStateFlow<ProfileState> = userRepository.user()
         .map { result ->
             if (result.isSuccess) {
-                ProfileState.Success(result.getOrThrow())
+                ProfileState(screenState = ProfileScreenState.Success, user = result.getOrThrow())
             } else
-                ProfileState.Error
+                ProfileState(screenState = ProfileScreenState.Error)
         }
         .restartableStateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = ProfileState.Loading
+            initialValue = ProfileState(screenState = ProfileScreenState.Loading)
         )
 
     fun updateImage(image: Uri?) {
@@ -66,11 +67,16 @@ class ProfileViewModel(
     }
 }
 
-sealed interface ProfileState {
+data class ProfileState(
+    val screenState: ProfileScreenState = ProfileScreenState.Loading,
+    val user: User? = null
+)
 
-    data object Loading : ProfileState
+sealed interface ProfileScreenState {
 
-    data object Error : ProfileState
+    data object Loading : ProfileScreenState
 
-    data class Success(val user: User) : ProfileState
+    data object Error : ProfileScreenState
+
+    data object Success : ProfileScreenState
 }

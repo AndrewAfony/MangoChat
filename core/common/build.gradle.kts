@@ -17,6 +17,8 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+    implementation(libs.compose.shimmer)
+
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)
 }

@@ -2,7 +2,7 @@ package andrewafony.testapp.profile.screen
 
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
-import andrewafony.testapp.profile.ProfileState
+import andrewafony.testapp.profile.ProfileScreenState
 import andrewafony.testapp.profile.ProfileViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -33,12 +33,11 @@ fun EditCityScreen(
     navigateBack: () -> Unit
 ) {
 
-    val profileState by viewModel.userState.collectAsStateWithLifecycle()
-    val city = (profileState as ProfileState.Success).user.city
+    val profileState by viewModel.state.collectAsStateWithLifecycle()
 
     EditCityScreenContent(
         modifier = modifier,
-        city = city,
+        city = profileState.user?.city,
         updateCity = viewModel::updateCity,
         navigateBack = navigateBack
     )
