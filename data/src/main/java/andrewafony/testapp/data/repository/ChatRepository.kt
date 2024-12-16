@@ -1,5 +1,6 @@
 package andrewafony.testapp.data.repository
 
+import andrewafony.testapp.data.cache.UserCache
 import andrewafony.testapp.domain.model.ChatMessage
 import andrewafony.testapp.domain.repository.ChatRepository
 import androidx.compose.runtime.mutableStateListOf
@@ -9,7 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 
-class ChatRepositoryTest: ChatRepository {
+class ChatRepositoryTest(
+    private val userCache: UserCache
+): ChatRepository {
 
     private val messages = mutableStateListOf<ChatMessage>()
     private var uniqueId = 3
@@ -26,10 +29,22 @@ class ChatRepositoryTest: ChatRepository {
             ChatMessage(
                 id = ++uniqueId,
                 message = text,
-                user = "user",
+                user = userCache.userName(),
                 timestamp = System.currentTimeMillis().toString()
             )
         )
+        if (Random.nextBoolean()) {
+            delay(Random.nextLong(500, 1500))
+            messages.add(
+                0,
+                ChatMessage(
+                    id = ++uniqueId,
+                    message = text.reversed(),
+                    user = "user",
+                    timestamp = System.currentTimeMillis().toString()
+                )
+            )
+        }
     }
 
     override suspend fun clear() {

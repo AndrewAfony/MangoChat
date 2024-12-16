@@ -1,5 +1,6 @@
 package andrewafony.testapp.data.repository
 
+import andrewafony.testapp.data.cache.UserCache
 import andrewafony.testapp.shared_data.BaseRepository
 import andrewafony.testapp.data.local.UserDao
 import andrewafony.testapp.data.remote.model.request.Avatar
@@ -11,29 +12,53 @@ import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.domain.repository.UserField
 import andrewafony.testapp.domain.repository.UserRepository
 import andrewafony.testapp.shared_data.utils.onSuccess
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class UserRepositoryImpl(
     private val userDao: UserDao,
     private val userService: UserService,
+    private val userCache: UserCache,
     private val imageHandler: ImageHandler,
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job()),
 ) : BaseRepository(), UserRepository {
+
+    private var userPrefetchJob: Job? = null
+
+    override fun prefetchUser() {
+        userPrefetchJob = scope.launch {
+            val user = userDao.observeUser().firstOrNull()
+            if (user == null) {
+                doNetworkRequestUnitWithCollect {
+                    userService.userInfo().onSuccess {
+                        userDao.saveUserInfo(it.toEntity())
+                        userCache.updateName(name = it.profile_data.name)
+                    }
+                }
+            } else {
+                userCache.updateName(name = user.name)
+            }
+        }
+    }
 
     override fun user(): Flow<Result<User>> = flow {
 
         val user = userDao.observeUser().firstOrNull()
 
-        if (user == null) {
+        if (user == null && userPrefetchJob?.isActive == false) {
             doNetworkRequestUnitWithCollect {
                 userService.userInfo().onSuccess {
                     userDao.saveUserInfo(it.toEntity())
+                    userCache.updateName(name = it.profile_data.name)
                 }
             }
         }
@@ -43,8 +68,6 @@ class UserRepositoryImpl(
             .map { Result.success(it.toDomain()) }
         )
     }
-
-    override suspend fun userInfo(): User = doLocalRequest { userDao.userInfo() }
 
     override suspend fun updateUserInfo(field: UserField): Unit = withContext(Dispatchers.IO) {
         val user = userDao.userInfo()

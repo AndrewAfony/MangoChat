@@ -5,13 +5,16 @@ import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
-interface UserRepository {
+interface UserRepository : UserPrefetch {
 
     fun user() : Flow<Result<User>>
 
-    suspend fun userInfo() : User
-
     suspend fun updateUserInfo(field: UserField)
+}
+
+interface UserPrefetch {
+
+    fun prefetchUser()
 }
 
 sealed interface UserField {
