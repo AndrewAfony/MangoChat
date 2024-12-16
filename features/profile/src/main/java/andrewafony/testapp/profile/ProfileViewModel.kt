@@ -17,7 +17,7 @@ class ProfileViewModel(
     private val userRepository: UserRepository,
 ) : ViewModel() {
 
-    val state: andrewafony.testapp.shared_ui.utils.RestartableStateFlow<ProfileState> = userRepository.user()
+    val state: RestartableStateFlow<ProfileState> = userRepository.user()
         .map { result ->
             if (result.isSuccess) {
                 ProfileState(screenState = ProfileScreenState.Success, user = result.getOrThrow())

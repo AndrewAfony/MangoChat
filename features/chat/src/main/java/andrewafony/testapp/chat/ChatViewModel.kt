@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(
     getUserInfo: GetUserInfoUseCase,
-    private val chatRepository: ChatRepository,
+    private val chatRepository: ChatRepository
 ) : ViewModel() {
 
     val user = getUserInfo()

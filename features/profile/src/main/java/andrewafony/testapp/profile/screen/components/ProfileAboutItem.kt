@@ -1,5 +1,6 @@
 package andrewafony.testapp.profile.screen.components
 
+import andrewafony.testapp.designsystem.theme.veryLightGray
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
@@ -8,14 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,7 +64,7 @@ fun ProfileAboutItemContent(
         ) {
             TextButton(onClick = {updateAbout(textValue) }, modifier = Modifier.padding(end = 16.dp)) { Text("Сохранить") }
         }
-        OutlinedTextField(
+        TextField(
             modifier = modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 120.dp),
@@ -85,11 +85,13 @@ fun ProfileAboutItemContent(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color.Transparent,
                 focusedBorderColor = Color.Transparent,
+                disabledBorderColor = Color.Transparent,
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black,
                 errorTextColor = Color.Red,
-                unfocusedContainerColor = andrewafony.testapp.designsystem.theme.veryLightGray,
-                focusedContainerColor = andrewafony.testapp.designsystem.theme.veryLightGray
+                unfocusedContainerColor = veryLightGray,
+                focusedContainerColor = veryLightGray,
+                disabledContainerColor = veryLightGray
             ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences

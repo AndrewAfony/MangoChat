@@ -11,6 +11,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.compose.KoinContext
 
 class MainActivity : ComponentActivity() {
 
@@ -30,13 +31,15 @@ class MainActivity : ComponentActivity() {
             val backStack by navController.currentBackStackEntryAsState()
             val currentRoute = backStack?.destination?.route
 
-            MangoTestChatTheme {
-                MainScreen(
-                    navController = navController,
-                    currentRoute = currentRoute,
-                    featureProvider = featureProvider,
-                    isLogged = isLogged
-                )
+            KoinContext {
+                MangoTestChatTheme {
+                    MainScreen(
+                        navController = navController,
+                        currentRoute = currentRoute,
+                        featureProvider = featureProvider,
+                        isLogged = isLogged
+                    )
+                }
             }
         }
     }
