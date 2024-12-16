@@ -1,6 +1,6 @@
 package andrewafony.testapp.home
 
-import andrewafony.testapp.common.utils.SetWindowSoftInputMode
+import andrewafony.testapp.shared_ui.utils.SetWindowSoftInputMode
 import andrewafony.testapp.domain.model.Chat
 import andrewafony.testapp.home.stories.HomeScreenStories
 import android.view.WindowManager
@@ -36,7 +36,7 @@ fun HomeScreen(
     navigateToChat: (String) -> Unit
 ) {
 
-    SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    andrewafony.testapp.shared_ui.utils.SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
     val chats by viewModel.chats.collectAsStateWithLifecycle()
 

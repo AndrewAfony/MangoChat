@@ -18,7 +18,7 @@ dependencies {
     implementation(projects.domain)
 
     implementation(projects.core.analytics)
-    implementation(projects.core.common)
+    implementation(projects.core.shared.sharedData)
 
     // ==== Retrofit ====
     implementation(libs.retrofit)

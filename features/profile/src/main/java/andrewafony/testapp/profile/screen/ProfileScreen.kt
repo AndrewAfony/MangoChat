@@ -1,7 +1,7 @@
 package andrewafony.testapp.profile.screen
 
-import andrewafony.testapp.common.utils.shimmerEffect
-import andrewafony.testapp.common.utils.toast
+import andrewafony.testapp.shared_ui.utils.shimmerEffect
+import andrewafony.testapp.shared_ui.utils.toast
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.profile.ProfileScreenState
 import andrewafony.testapp.profile.ProfileState

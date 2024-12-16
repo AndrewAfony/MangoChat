@@ -13,7 +13,7 @@ dependencies {
     api(projects.features.authApi)
 
     implementation(projects.domain)
-    implementation(projects.core.common)
+    implementation(projects.core.shared.sharedUi)
     implementation(projects.core.designsystem)
 
     implementation(projects.features.homeApi)

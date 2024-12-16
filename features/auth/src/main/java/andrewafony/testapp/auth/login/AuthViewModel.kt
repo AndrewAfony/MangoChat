@@ -1,6 +1,6 @@
 package andrewafony.testapp.auth.login
 
-import andrewafony.testapp.common.base.StatefulViewModel
+import andrewafony.testapp.shared_ui.StatefulViewModel
 import andrewafony.testapp.domain.repository.AuthRepository
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.onStart
@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
-) : StatefulViewModel<AuthUiState, UiEvent>(AuthUiState()) {
+) : andrewafony.testapp.shared_ui.StatefulViewModel<AuthUiState, UiEvent>(AuthUiState()) {
 
     fun handleButton(fullNumber: String) = viewModelScope.launch {
         if (state.value.screenState is AuthState.EnterCode) {

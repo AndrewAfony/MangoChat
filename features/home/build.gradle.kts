@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.features.chatApi)
 
-    implementation(projects.core.common)
+    implementation(projects.core.shared.sharedUi)
     implementation(projects.core.designsystem)
 
     implementation(platform(libs.androidx.compose.bom))

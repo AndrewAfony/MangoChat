@@ -29,6 +29,8 @@ uiAndroid = "1.7.5"
 uiTooling = "1.7.5"
 uiToolingPreviewAndroidVersion = "1.7.5"
 secrets = "2.0.1"
+appcompat = "1.7.0"
+material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -71,6 +73,8 @@ androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", vers
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroidVersion" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

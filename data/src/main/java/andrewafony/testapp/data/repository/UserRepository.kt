@@ -1,16 +1,16 @@
 package andrewafony.testapp.data.repository
 
-import andrewafony.testapp.common.base.BaseRepository
-import andrewafony.testapp.common.utils.onSuccess
+import andrewafony.testapp.shared_data.BaseRepository
 import andrewafony.testapp.data.local.UserDao
 import andrewafony.testapp.data.remote.model.request.Avatar
 import andrewafony.testapp.data.remote.model.request.UserRequest
 import andrewafony.testapp.data.remote.model.request.toRequestDate
-import andrewafony.testapp.data.remote.service.MainService
+import andrewafony.testapp.data.remote.service.UserService
 import andrewafony.testapp.data.utils.ImageHandler
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.domain.repository.UserField
 import andrewafony.testapp.domain.repository.UserRepository
+import andrewafony.testapp.shared_data.utils.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 
 class UserRepositoryImpl(
     private val userDao: UserDao,
-    private val mainService: MainService,
+    private val userService: UserService,
     private val imageHandler: ImageHandler,
 ) : BaseRepository(), UserRepository {
 
@@ -30,11 +30,9 @@ class UserRepositoryImpl(
 
         val user = userDao.observeUser().firstOrNull()
 
-        if (user != null)
-            emit(Result.success(user.toDomain()))
-        else {
+        if (user == null) {
             doNetworkRequestUnitWithCollect {
-                mainService.userInfo().onSuccess {
+                userService.userInfo().onSuccess {
                     userDao.saveUserInfo(it.toEntity())
                 }
             }
@@ -54,7 +52,7 @@ class UserRepositoryImpl(
             is UserField.Name -> {
                 userDao.updateUserName(field.name)
                 doNetworkRequestUnitWithCollect {
-                    mainService.updateUserInfo(
+                    userService.updateUserInfo(
                         UserRequest(
                             name = field.name,
                             username = user.username
@@ -66,10 +64,11 @@ class UserRepositoryImpl(
             is UserField.About -> {
                 userDao.updateUserAbout(field.about)
                 doNetworkRequestUnitWithCollect {
-                    mainService.updateUserInfo(
+                    userService.updateUserInfo(
                         UserRequest(
                             name = user.name,
-                            username = user.username
+                            username = user.username,
+                            status = field.about
                         )
                     )
                 }
@@ -78,7 +77,7 @@ class UserRepositoryImpl(
             is UserField.Birthday -> {
                 userDao.updateUserBirthday(field.birthday)
                 doNetworkRequestUnitWithCollect {
-                    mainService.updateUserInfo(
+                    userService.updateUserInfo(
                         UserRequest(
                             name = user.name,
                             username = user.username,
@@ -91,7 +90,7 @@ class UserRepositoryImpl(
             is UserField.City -> {
                 userDao.updateUserCity(field.city)
                 doNetworkRequestUnitWithCollect {
-                    mainService.updateUserInfo(
+                    userService.updateUserInfo(
                         UserRequest(
                             name = user.name,
                             username = user.username,
@@ -106,7 +105,7 @@ class UserRepositoryImpl(
                 userDao.updateUserImage(imageUri)
                 imageHandler.encode(field.image)?.let { encodedImage ->
                     doNetworkRequestUnitWithCollect {
-                        mainService.updateUserInfo(
+                        userService.updateUserInfo(
                             UserRequest(
                                 name = user.name,
                                 username = user.username,

@@ -1,7 +1,7 @@
 package andrewafony.testapp.profile
 
-import andrewafony.testapp.common.utils.RestartableStateFlow
-import andrewafony.testapp.common.utils.restartableStateIn
+import andrewafony.testapp.shared_ui.utils.RestartableStateFlow
+import andrewafony.testapp.shared_ui.utils.restartableStateIn
 import andrewafony.testapp.domain.model.User
 import andrewafony.testapp.domain.repository.UserField
 import andrewafony.testapp.domain.repository.UserRepository
@@ -17,7 +17,7 @@ class ProfileViewModel(
     private val userRepository: UserRepository,
 ) : ViewModel() {
 
-    val state: RestartableStateFlow<ProfileState> = userRepository.user()
+    val state: andrewafony.testapp.shared_ui.utils.RestartableStateFlow<ProfileState> = userRepository.user()
         .map { result ->
             if (result.isSuccess) {
                 ProfileState(screenState = ProfileScreenState.Success, user = result.getOrThrow())

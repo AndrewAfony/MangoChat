@@ -1,7 +1,7 @@
 package andrewafony.testapp.auth.login
 
-import andrewafony.testapp.common.utils.SetWindowSoftInputMode
-import andrewafony.testapp.common.utils.toast
+import andrewafony.testapp.shared_ui.utils.SetWindowSoftInputMode
+import andrewafony.testapp.shared_ui.utils.toast
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.designsystem.theme.veryLightGray
@@ -63,7 +63,7 @@ fun LoginScreen(
     navigateToHome: () -> Unit,
 ) {
 
-    SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    andrewafony.testapp.shared_ui.utils.SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
     val context = LocalContext.current
     val locale = Locale.current

@@ -14,7 +14,7 @@ dependencies {
 
     implementation(projects.core.designsystem)
     implementation(projects.domain)
-    implementation(projects.core.common)
+    implementation(projects.core.shared.sharedUi)
 
     implementation(libs.compose.shimmer)
 

@@ -1,6 +1,6 @@
 package andrewafony.testapp.auth.registration
 
-import andrewafony.testapp.common.utils.toast
+import andrewafony.testapp.shared_ui.utils.toast
 import andrewafony.testapp.designsystem.component.MangoButtonWithLoader
 import andrewafony.testapp.designsystem.component.MangoTextField
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme

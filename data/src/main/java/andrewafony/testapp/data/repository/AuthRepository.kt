@@ -1,7 +1,6 @@
 package andrewafony.testapp.data.repository
 
-import andrewafony.testapp.common.base.BaseRepository
-import andrewafony.testapp.common.utils.onSuccess
+import andrewafony.testapp.shared_data.BaseRepository
 import andrewafony.testapp.data.remote.model.request.Auth
 import andrewafony.testapp.data.remote.model.request.AuthCode
 import andrewafony.testapp.data.remote.model.request.Registration
@@ -9,6 +8,7 @@ import andrewafony.testapp.data.remote.service.AuthService
 import andrewafony.testapp.data.utils.Token
 import andrewafony.testapp.data.utils.TokenManager
 import andrewafony.testapp.domain.repository.AuthRepository
+import andrewafony.testapp.shared_data.utils.onSuccess
 import kotlinx.coroutines.flow.Flow
 
 class AuthRepositoryImpl(

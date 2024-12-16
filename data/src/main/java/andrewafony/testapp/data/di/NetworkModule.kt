@@ -4,7 +4,7 @@ import andrewafony.testapp.data.BuildConfig
 import andrewafony.testapp.data.remote.interceptors.AuthInterceptor
 import andrewafony.testapp.data.remote.interceptors.MangoAuthenticator
 import andrewafony.testapp.data.remote.service.AuthService
-import andrewafony.testapp.data.remote.service.MainService
+import andrewafony.testapp.data.remote.service.UserService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
@@ -53,7 +53,7 @@ internal val networkModule = module {
         retrofit.create(AuthService::class.java)
     }
 
-    single<MainService> {
+    single<UserService> {
         val logging: HttpLoggingInterceptor = get()
         val authInterceptor: Interceptor = get()
         val authenticator: Authenticator = get()
@@ -74,6 +74,6 @@ internal val networkModule = module {
             .client(client)
             .build()
 
-        retrofit.create(MainService::class.java)
+        retrofit.create(UserService::class.java)
     }
 }
