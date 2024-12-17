@@ -2,12 +2,11 @@ package andrewafony.testapp.home
 
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.domain.model.Chat
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -93,14 +92,14 @@ fun HomeScreenChatItem(
         trailingContent = {
             Column(
                 modifier = Modifier,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = lastMessageTime,
                     color = Color.Gray,
                     style = MaterialTheme.typography.labelMedium,
                 )
-                Spacer(modifier = Modifier.size(4.dp))
                 if (newMessages > 0) {
                     Box(
                         modifier = Modifier

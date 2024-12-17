@@ -17,7 +17,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -145,7 +144,7 @@ fun ProfileScreenContent(
         if (profileState.screenState is ProfileScreenState.Error) {
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -153,7 +152,6 @@ fun ProfileScreenContent(
                     color = Color.Red,
                     fontStyle = FontStyle.Italic
                 )
-                Spacer(modifier = Modifier.size(12.dp))
                 Button(onClick = retry) {
                     Text("Повторить")
                 }

@@ -13,7 +13,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -128,7 +127,7 @@ fun BottomNavigation(
                         .clickable { onButtonClick() }
                         .background(Color.Black),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterHorizontally)
                 ) {
 
                     when (targetState) {
@@ -148,7 +147,6 @@ fun BottomNavigation(
                                 contentDescription = null,
                                 tint = Color.White
                             )
-                            Spacer(modifier = Modifier.padding(4.dp))
                             Text(
                                 modifier = Modifier.padding(vertical = 10.dp),
                                 text = "Новый чат",
@@ -163,7 +161,6 @@ fun BottomNavigation(
                                 contentDescription = null,
                                 tint = Color.White
                             )
-                            Spacer(modifier = Modifier.padding(4.dp))
                             Text(
                                 modifier = Modifier.padding(vertical = 10.dp),
                                 text = "Меню",

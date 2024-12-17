@@ -1,6 +1,7 @@
 package andrewafony.testapp.home.stories
 
 import andrewafony.testapp.shared_ui.utils.TEST_IMAGE
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
@@ -14,14 +15,15 @@ fun HomeScreenStories(
 ) {
     LazyRow(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
             NewStoryItem()
         }
         items(5) {
             StoryItem(
-                image = andrewafony.testapp.shared_ui.utils.TEST_IMAGE,
+                image = TEST_IMAGE,
                 name = "Name $it"
             ) { }
         }

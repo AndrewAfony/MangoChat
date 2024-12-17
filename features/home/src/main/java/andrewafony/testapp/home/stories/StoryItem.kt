@@ -1,8 +1,8 @@
 package andrewafony.testapp.home.stories
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +25,10 @@ fun StoryItem(
 ) {
 
     Column(
-        modifier = modifier.padding(end = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
+            .clickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AsyncImage(
             model = image,
@@ -36,7 +38,6 @@ fun StoryItem(
                 .clip(CircleShape)
                 .size(64.dp)
         )
-        Spacer(modifier = Modifier.size(12.dp))
         Text(
             text = name,
             style = MaterialTheme.typography.bodyMedium

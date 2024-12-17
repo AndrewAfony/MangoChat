@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -158,7 +157,8 @@ fun ChatScreenTopBar(
                 .size(56.dp)
         )
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = user.name,
@@ -166,7 +166,6 @@ fun ChatScreenTopBar(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
-            Spacer(modifier = Modifier.size(4.dp))
             Text(
                 text = user.status,
                 style = MaterialTheme.typography.bodySmall,

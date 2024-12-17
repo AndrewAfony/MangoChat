@@ -1,9 +1,8 @@
 package andrewafony.testapp.home.stories
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -28,8 +27,9 @@ fun NewStoryItem(
 ) {
 
     Column(
-        modifier = modifier.padding(end = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Box(
             modifier = modifier
@@ -45,11 +45,9 @@ fun NewStoryItem(
             Icon(
                 Icons.Default.Add,
                 "",
-                modifier = Modifier.size(36.dp),
-
-                )
+                modifier = Modifier.size(36.dp)
+            )
         }
-        Spacer(modifier = Modifier.size(12.dp))
         Text(
             text = "Add story",
             style = MaterialTheme.typography.bodyMedium
