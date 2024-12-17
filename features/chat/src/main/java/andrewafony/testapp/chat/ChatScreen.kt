@@ -3,6 +3,7 @@ package andrewafony.testapp.chat
 import andrewafony.testapp.domain.model.ChatMessage
 import andrewafony.testapp.domain.model.User
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -13,12 +14,14 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -44,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -231,7 +237,7 @@ fun ChatMessages(
                     state = listState,
                     reverseLayout = true,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom
+                    verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Bottom)
                 ) {
                     items(state.messages, key = { it.id }) { item ->
                         Message(
@@ -243,8 +249,7 @@ fun ChatMessages(
                                         stiffness = Spring.StiffnessLow,
                                         dampingRatio = Spring.DampingRatioLowBouncy
                                     )
-                                )
-                                .padding(top = 24.dp),
+                                ),
                             message = item.message,
                             isUserMe = userName == item.user
                         )
@@ -279,43 +284,61 @@ fun ChatScreenBottomBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Outlined.Add,
-            contentDescription = null,
             modifier = Modifier
+                .weight(1f)
+                .clip(CircleShape)
                 .clickable { onPlusClick() }
+                .padding(vertical = 16.dp),
+            imageVector = Icons.Outlined.Add,
+            contentDescription = null
         )
-        TextField(
-            value = messageText,
-            onValueChange = onMessageInput,
-            placeholder = {
-                Text(
-                    text = "Сообщение",
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            textStyle = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .fillMaxWidth(0.7f)
+        BasicTextField(
+            modifier = modifier
+                .animateContentSize()
+                .weight(6f)
                 .padding(vertical = 12.dp)
-                .clip(RoundedCornerShape(24.dp))
-                .background(Color(0xFFF5F5F5)),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                cursorColor = Color.Black
-            ),
+                .fillMaxWidth(),
+            value = messageText,
+            onValueChange = {
+                onMessageInput(it)
+            },
             keyboardActions = KeyboardActions(
                 onSend = { onMessageSend(messageText) }
             ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Send
-            )
+            ),
+            maxLines = 4,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            textStyle = MaterialTheme.typography.bodyMedium,
+            decorationBox = { innerTextField ->
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(Color(0xFFF5F5F5)),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(12.dp)
+                    ) {
+                        if (messageText.isEmpty())
+                            Text(
+                                text = "Сообщение",
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        innerTextField()
+                    }
+                }
+            }
         )
 
         AnimatedContent(
+            modifier = Modifier
+                .weight(1f),
             targetState = messageText.isBlank(),
             transitionSpec = {
                 scaleIn() + fadeIn() togetherWith scaleOut() + fadeOut()
@@ -323,6 +346,8 @@ fun ChatScreenBottomBar(
         ) { isTextBlank ->
             if (isTextBlank) {
                 Icon(
+                    modifier = Modifier
+                        .padding(vertical = 16.dp),
                     imageVector = andrewafony.testapp.designsystem.icons.IconMicrophone,
                     contentDescription = null
                 )
@@ -330,7 +355,8 @@ fun ChatScreenBottomBar(
                 Icon(
                     modifier = Modifier
                         .clip(CircleShape)
-                        .clickable { onMessageSend(messageText) },
+                        .clickable { onMessageSend(messageText) }
+                        .padding(vertical = 16.dp),
                     imageVector = Icons.AutoMirrored.Outlined.Send,
                     contentDescription = null
                 )
