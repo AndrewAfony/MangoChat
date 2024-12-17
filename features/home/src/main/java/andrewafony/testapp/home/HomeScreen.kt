@@ -36,7 +36,7 @@ fun HomeScreen(
     navigateToChat: (String) -> Unit
 ) {
 
-    andrewafony.testapp.shared_ui.utils.SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    SetWindowSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
     val chats by viewModel.chats.collectAsStateWithLifecycle()
 

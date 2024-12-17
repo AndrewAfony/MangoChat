@@ -1,13 +1,13 @@
 package andrewafony.testapp.profile.screen
 
-import andrewafony.testapp.shared_ui.utils.shimmerEffect
-import andrewafony.testapp.shared_ui.utils.toast
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
 import andrewafony.testapp.profile.ProfileScreenState
 import andrewafony.testapp.profile.ProfileState
 import andrewafony.testapp.profile.ProfileViewModel
 import andrewafony.testapp.profile.screen.components.ProfileAboutItem
 import andrewafony.testapp.profile.screen.components.ProfileItem
+import andrewafony.testapp.shared_ui.utils.shimmerEffect
+import andrewafony.testapp.shared_ui.utils.toast
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

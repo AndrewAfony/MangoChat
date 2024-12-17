@@ -1,7 +1,7 @@
 plugins {
-    alias(libs.plugins.mango.feature.plugin)
+    alias(libs.plugins.mangochat.android.library)
+    alias(libs.plugins.mangochat.android.library.compose)
     alias(libs.plugins.serialization)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {

@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.mango.feature.plugin)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.mangochat.android.feature)
+    alias(libs.plugins.mangochat.android.library.compose)
 }
 
 android {
@@ -13,10 +13,6 @@ dependencies {
     api(projects.features.chatApi)
 
     implementation(projects.domain)
-    implementation(projects.core.designsystem)
-
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui.tooling.preview)
 
     // ==== Coil ====
     implementation(libs.coil.compose)
