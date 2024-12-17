@@ -1,6 +1,7 @@
 package andrewafony.testapp.mangotestchat
 
 import andrewafony.testapp.designsystem.theme.MangoTestChatTheme
+import andrewafony.testapp.mangotestchat.main_screen.MainScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
